@@ -9,7 +9,7 @@ namespace naivebayes{
 namespace visualizer{
     void particle::draw() {
         ci::gl::color(re,gr,bl);
-        ci::gl::drawSolidCircle(position_,20);
+        ci::gl::drawSolidCircle(position_,kRadius);
 
     }
 

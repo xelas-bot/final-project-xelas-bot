@@ -2,91 +2,122 @@
 
 namespace naivebayes {
 
-namespace visualizer {
+    namespace visualizer {
 
-NaiveBayesApp::NaiveBayesApp()
-    : sketchpad_(glm::vec2(kMargin, kMargin), kImageDimension,
-                 kWindowSize - 2 * kMargin) {
-    particle_handler particleHandlerTemp((int )kWindowSize);
+        NaiveBayesApp::NaiveBayesApp()
+                : sketchpad_(glm::vec2(kMargin, kMargin), kImageDimension,
+                             kWindowSize - 2 * kMargin) {
+            particle_handler particleHandlerTemp((int) kWindowSize);
 
-    particleHandler_ = particleHandlerTemp;
-    std::cout << "hello";
-
-
-  ci::app::setWindowSize((int) kWindowSize, (int) kWindowSize);
-
-  particle particle({kWindowSize,kWindowSize}, {-10,-10});
-  particle_ = particle;
-}
-void NaiveBayesApp::setup() {
-    particleHandler_.addParticle(50);
-}
-
-void NaiveBayesApp::update() {
-    //ci::Color8u background_color(0, 0, 0);  // black
-    //ci::gl::clear(background_color);
-    particleHandler_.update();
+            particleHandler_ = particleHandlerTemp;
 
 
+            ci::app::setWindowSize((int) kWindowSize, (int) kWindowSize);
 
-}
+            particle particle({kWindowSize, kWindowSize}, {-10, -10});
+            particle_ = particle;
+        }
 
-void NaiveBayesApp::draw() {
-  ci::Color8u background_color(0, 0, 0);  // black
-  ci::gl::clear(background_color,true);
-  int xCen = (int)kWindowSize/2;
-  int yCen = (int)kWindowSize/2;
-  int pixelCount = 0;
-
-    float x = (float) cos( getElapsedSeconds() ) * 100.0f;
-    float y = (float)sin( getElapsedSeconds() ) * 100.0f;
-    ci::Color("red");
-    //ci::gl::drawSolidCircle( glm::vec2 ( x + getWindowSize().x/2, y + getWindowSize().y/2 ), 50 );
-
-    particleHandler_.draw();
+        void NaiveBayesApp::setup() {
+            particleHandler_.addParticle(10);
+            std::ofstream myfile;
+            myfile.open(
+                    "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testOverload");
+            myfile << particleHandler_;
+            myfile.close();
 
 
 
+        }
+
+        void NaiveBayesApp::update() {
+            //ci::Color8u background_color(0, 0, 0);  // black
+            //ci::gl::clear(background_color);
+            particleHandler_.update();
 
 
-  ci::gl::drawStringCentered(
-      "Press Delete to pause the sim. Press Enter to start the sim.",
-      glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("white"));
-    std::cout << "hello";
+        }
 
-    particle* poi;
-    poi = particleHandler_.currentParticles_.at(0);
-    ci::gl::drawStringCentered(
+        void NaiveBayesApp::draw() {
+            ci::Color8u background_color(0, 0, 0);  // black
+            ci::gl::clear(background_color, true);
+            int xCen = (int) kWindowSize / 2;
+            int yCen = (int) kWindowSize / 2;
+            int pixelCount = 0;
 
-      "Prediction: " + std::to_string(particleHandler_.getClosestParticle(poi)->position_.x)  ,
-      glm::vec2(kWindowSize / 2, kWindowSize - kMargin / 2), ci::Color("white"));
+            float x = (float) cos(getElapsedSeconds()) * 100.0f;
+            float y = (float) sin(getElapsedSeconds()) * 100.0f;
+            ci::Color("red");
+            //ci::gl::drawSolidCircle( glm::vec2 ( x + getWindowSize().x/2, y + getWindowSize().y/2 ), 50 );
 
-}
-
-void NaiveBayesApp::mouseDown(ci::app::MouseEvent event) {
-  sketchpad_.HandleBrush(event.getPos());
-}
-
-void NaiveBayesApp::mouseDrag(ci::app::MouseEvent event) {
-  sketchpad_.HandleBrush(event.getPos());
-}
-
-void NaiveBayesApp::keyDown(ci::app::KeyEvent event) {
-  switch (event.getCode()) {
-    case ci::app::KeyEvent::KEY_RETURN:
+            particleHandler_.draw();
 
 
+            ci::gl::drawStringCentered(
+                    "Press Delete to slow the sim. Press Enter to speed the sim. Press f to pay resp- save to file. Press s to load a saved file",
+                    glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("white"));
+            std::cout << "hello";
+
+            particle *poi;
+            poi = particleHandler_.currentParticles_.at(0);
+            ci::gl::drawStringCentered(
+
+                    "Prediction: " + std::to_string(particleHandler_.getClosestParticle(poi)->position_.x),
+                    glm::vec2(kWindowSize / 2, kWindowSize - kMargin / 2), ci::Color("white"));
+
+        }
+
+        void NaiveBayesApp::mouseDown(ci::app::MouseEvent event) {
+            sketchpad_.HandleBrush(event.getPos());
+        }
+
+        void NaiveBayesApp::mouseDrag(ci::app::MouseEvent event) {
+            sketchpad_.HandleBrush(event.getPos());
+        }
+
+        void NaiveBayesApp::keyDown(ci::app::KeyEvent event) {
+            switch (event.getCode()) {
+                case ci::app::KeyEvent::KEY_s: {
+
+
+                    std::ifstream file;
+                    file.open(
+                            "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testOverload");
+                    file >>particleHandler_;
+                    file.close();
+
+                }
+                case ci::app::KeyEvent::KEY_RETURN: {
+
+
+                    particleHandler_.speedMultiplyer(speedMult + 0.25);
+
+
+                    break;
+                }
+                case ci::app::KeyEvent::KEY_DELETE: {
+
+
+                    particleHandler_.speedMultiplyer(speedMult - 0.25);
+
+
+                    break;
+                }
+                case ci::app::KeyEvent::KEY_f: {
+
+
+                    std::ofstream myfile;
+                    myfile.open(
+                            "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testOverload");
+                    myfile << particleHandler_;
+                    myfile.close();
+                }
 
 
 
-      break;
+            }
+        }
 
-    case ci::app::KeyEvent::KEY_DELETE:
-      sketchpad_.Clear();
-      break;
-  }
-}
-
-}  // namespace visualizer
+    }  // namespace visualizer
 
 }  // namespace naivebayes

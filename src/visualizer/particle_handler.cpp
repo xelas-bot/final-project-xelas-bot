@@ -12,75 +12,88 @@ namespace naivebayes {
         void particle_handler::update() {
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
+                int radius = currentParticles_.at(i)->kRadius;
 
 
-                if (currentParticles_.at(i)->position_.x < 20) {
+                if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
                     currentParticles_.at(i)->vert_collision();
+                    currentParticles_.at(i)->update();
 
-                } else if (currentParticles_.at(i)->position_.x > windowSize_ - 20) {
+                } else if (currentParticles_.at(i)->position_.x > windowSize_ - radius &&
+                           currentParticles_.at(i)->velocity_.x > 0) {
                     currentParticles_.at(i)->vert_collision();
+                    currentParticles_.at(i)->update();
 
-                } else if (currentParticles_.at(i)->position_.y < 20) {
+                } else if (currentParticles_.at(i)->position_.y < radius && currentParticles_.at(i)->velocity_.y < 0) {
                     currentParticles_.at(i)->hor_collision();
+                    currentParticles_.at(i)->update();
 
-                } else if (currentParticles_.at(i)->position_.y > windowSize_ - 20) {
+                } else if (currentParticles_.at(i)->position_.y > windowSize_ - radius &&
+                           currentParticles_.at(i)->velocity_.y > 0) {
                     currentParticles_.at(i)->hor_collision();
+                    currentParticles_.at(i)->update();
 
-                } else {
-                    if (currentParticles_.size() >= 2) {
-
-                        particle* current;
-                        current = currentParticles_.at(i);
-                        particle* closest = getClosestParticle(current);
-
-                        for (size_t x = 0; x<currentParticles_.size(); x ++){
-
-                        }
+                } else if (currentParticles_.size() >= 2) {
+                    particle *current;
+                    current = currentParticles_.at(i);
+                    particle *closest = getClosestParticle(current);
 
 
+                    if (getDistanceBetweenParticle(*currentParticles_.at(i), *closest) < 2 * radius
+                        &&
+                        glm::dot((current->velocity_ - closest->velocity_), (current->position_ - closest->position_)) <
+                        0) {
+
+                        glm::vec2 velCur = current->velocity_;
+                        glm::vec2 velClose = closest->velocity_;
+                        glm::vec2 disDiff = current->position_ - closest->position_;
+                        glm::vec2 disDiffTwo = closest->position_ - current->position_;
 
 
+                        glm::vec2 currentNewVel =
+                                velCur -
+                                (((glm::dot(velCur - velClose, disDiff)) /
+                                  (glm::length(disDiff) * glm::length(disDiff))) * (disDiff));
 
 
-                        if (getDistanceBetweenParticle(*currentParticles_.at(i), *closest) < 40) {
+                        glm::vec2 closestNewVel = velClose -
+                                                  ((glm::dot(velClose - velCur, disDiffTwo)) /
+                                                   (glm::length(disDiffTwo) * glm::length(disDiffTwo))) *
+                                                  (disDiffTwo);
 
-                            glm::vec2 velCur = current->velocity_;
-                            glm::vec2 velClose = closest->velocity_;
-                            glm::vec2 disDiff = current->position_ - closest->position_;
-                            glm::vec2 disDiffTwo = closest->position_ - current->position_;
-
-
-                            glm::vec2 currentNewVel =
-                                    velCur -
-                                            (((glm::dot(velCur - velClose, disDiff)) / (glm::length(disDiff) * glm::length(disDiff))) * (disDiff));
+                        closest->velocity_ = closestNewVel;
+                        current->velocity_ = currentNewVel;
+                        current->update();
+                        closest->update();
 
 
-                            glm::vec2 closestNewVel = velClose -
-                                                      ((glm::dot(velClose - velCur, disDiffTwo)) /
-                                                       (glm::length(disDiffTwo) * glm::length(disDiffTwo))) *
-                                                      (disDiffTwo);
-
-                            closest->velocity_= closestNewVel;
-                            current->velocity_ = currentNewVel;
-                            closest->update();
-
-
-                        }
+                    } else {
+                        currentParticles_.at(i)->update();
                     }
+
 
                 }
 
 
-                currentParticles_.at(i)->update();
             }
 
         }
 
         void particle_handler::draw() {
             for (size_t i = 0; i < currentParticles_.size(); i++) {
-                ci::gl::color(150, 150, 150);
                 currentParticles_.at(i)->draw();
             }
+
+        }
+
+        void particle_handler::speedMultiplyer(double speedMult) {
+            for (size_t i = 0; i < currentParticles_.size(); i++) {
+
+                currentParticles_.at(i)->velocity_ *= speedMult;
+
+
+            }
+
 
         }
 
@@ -109,10 +122,60 @@ namespace naivebayes {
 
         }
 
-        particle* particle_handler::getClosestParticle(particle* thisParticle) {
+        std::ostream &operator<<(std::ostream &out, const particle_handler &c) {
+            for (size_t i = 0; i < c.currentParticles_.size(); i++) {
+                out << c.currentParticles_.at(i)->position_.x << " " << c.currentParticles_.at(i)->position_.y
+                    << std::endl;
+                out << c.currentParticles_.at(i)->velocity_.x << " " << c.currentParticles_.at(i)->velocity_.y
+                    << std::endl;
+            }
+            return out;
+
+        }
+
+        std::istream &operator>>(std::istream &in, particle_handler &c) {
+
+            for (size_t i = 0; i < c.currentParticles_.size(); i++) {
+                delete c.currentParticles_.at(i);
+            }
+            c.currentParticles_.clear();
+
+
+            int lineNumber = 1;
+            std::string str;
+            particle *temp;
+            while (std::getline(in, str)) {
+
+
+                std::stringstream row_stream(str);
+                float num = 0;
+                std::vector<float> row;
+                while (row_stream >> num) {
+                    row.push_back(num);
+                }
+                if (lineNumber % 2 != 0) {
+                    temp = new particle({row.at(0), row.at(1)}, {0, 0});
+                }
+
+
+                if (lineNumber % 2 == 0) {
+                    temp->velocity_ = {row.at(0), row.at(1)};
+                    c.currentParticles_.push_back(temp);
+                }
+
+                lineNumber++;
+            }
+
+
+            return in;
+
+        }
+
+
+        particle *particle_handler::getClosestParticle(particle *thisParticle) {
             float temp = 0;
             float distance = 0;
-            particle* tempPart;
+            particle *tempPart;
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
                 if (getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i)) != 0) {

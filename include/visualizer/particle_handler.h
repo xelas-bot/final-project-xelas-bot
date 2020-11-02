@@ -14,9 +14,13 @@ namespace naivebayes {
         public:
             std::vector<particle*> currentParticles_;
             int windowSize_;
+            friend std::ostream & operator << (std::ostream &out, const particle_handler &c);
+            friend std::istream & operator >> (std::istream &in, particle_handler &c);
+
 
             particle_handler(int windowSize) {
                 windowSize_ = windowSize;
+
             }
             particle_handler(){
 
@@ -25,6 +29,7 @@ namespace naivebayes {
             void addParticle(int number);
 
             void update();
+            void speedMultiplyer(double speedMult);
 
             void draw();
             particle* getClosestParticle(particle* thisParticle);

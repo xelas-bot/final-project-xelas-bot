@@ -3,7 +3,10 @@
 #include <core/rename_this_file.h>
 
 TEST_CASE("Test Distance/Collisions") {
-  REQUIRE(naivebayes::Placeholder().GetBestClass() == "CS 126");
+
+
+
+
 }
 
 TEST_CASE("Test Particle Velocities") {

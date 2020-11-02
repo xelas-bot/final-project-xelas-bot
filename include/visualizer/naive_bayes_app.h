@@ -35,6 +35,7 @@ class NaiveBayesApp : public ci::app::App {
   const size_t kImageDimension = 28;
 
  private:
+    double speedMult = 1.0;
   Sketchpad sketchpad_;
   int current_prediction_ = -1;
   particle_handler particleHandler_;
