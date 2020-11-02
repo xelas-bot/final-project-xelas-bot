@@ -12,7 +12,7 @@ namespace naivebayes {
     namespace visualizer {
         class particle_handler {
         public:
-            std::vector<particle> currentParticles_;
+            std::vector<particle*> currentParticles_;
             int windowSize_;
 
             particle_handler(int windowSize) {
@@ -27,6 +27,8 @@ namespace naivebayes {
             void update();
 
             void draw();
+            particle* getClosestParticle(particle* thisParticle);
+            float getDistanceBetweenParticle(particle thisParticle, particle other);
 
 
         };

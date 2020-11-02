@@ -8,6 +8,7 @@ namespace naivebayes{
 
 namespace visualizer{
     void particle::draw() {
+        ci::gl::color(re,gr,bl);
         ci::gl::drawSolidCircle(position_,20);
 
     }
@@ -20,12 +21,12 @@ namespace visualizer{
 
 
     void particle::vert_collision() {
-        velocity_.x = -1 * velocity_.x;
+        velocity_.x = (-1) * velocity_.x;
 
     }
 
     void particle::hor_collision() {
-        velocity_.y = -1 * velocity_.y;
+        velocity_.y = (-1) * velocity_.y;
     }
 
 

@@ -40,10 +40,10 @@ void NaiveBayesApp::draw() {
 
     float x = (float) cos( getElapsedSeconds() ) * 100.0f;
     float y = (float)sin( getElapsedSeconds() ) * 100.0f;
+    ci::Color("red");
     //ci::gl::drawSolidCircle( glm::vec2 ( x + getWindowSize().x/2, y + getWindowSize().y/2 ), 50 );
 
     particleHandler_.draw();
-    particle_.draw();
 
 
 
@@ -54,8 +54,11 @@ void NaiveBayesApp::draw() {
       glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("white"));
     std::cout << "hello";
 
-  ci::gl::drawStringCentered(
-      "Prediction: " + std::to_string(particleHandler_.currentParticles_.at(1).position_.x)  ,
+    particle* poi;
+    poi = particleHandler_.currentParticles_.at(0);
+    ci::gl::drawStringCentered(
+
+      "Prediction: " + std::to_string(particleHandler_.getClosestParticle(poi)->position_.x)  ,
       glm::vec2(kWindowSize / 2, kWindowSize - kMargin / 2), ci::Color("white"));
 
 }
