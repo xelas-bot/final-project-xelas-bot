@@ -4,6 +4,7 @@ using naivebayes::visualizer::NaiveBayesApp;
 
 void prepareSettings(NaiveBayesApp::Settings* settings) {
   settings->setResizable(false);
+  settings->setFrameRate(30);
 }
 
 // This line is a macro that expands into an "int main()" function.

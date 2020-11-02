@@ -17,14 +17,9 @@ void Sketchpad::Draw() const {
   vec2 pixel_bottom_right =
       top_left_corner_ + vec2(28*pixel_side_length_, 28*pixel_side_length_);
 
-
   ci::gl::color(ci::Color("white"));
   ci::Rectf pixel_bounding_box(top_left_corner_, pixel_bottom_right );
   ci::gl::drawStrokedRect(pixel_bounding_box);
-
-
-
-
 
 }
 
@@ -45,7 +40,7 @@ void Sketchpad::HandleBrush(const vec2& brush_screen_coords) {
 }
 
 void Sketchpad::Clear() {
-  // TODO: implement this method
+  particles_.clear();
 }
 
 }  // namespace visualizer

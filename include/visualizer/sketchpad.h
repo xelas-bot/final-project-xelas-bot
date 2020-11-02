@@ -51,6 +51,7 @@ class Sketchpad {
 
  private:
   glm::vec2 top_left_corner_;
+  std::vector<int> particles_ = {0,0,0};
 
   size_t num_pixels_per_side_;
 

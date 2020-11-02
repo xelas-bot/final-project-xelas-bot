@@ -4,6 +4,7 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "sketchpad.h"
+#include "particle_handler.h"
 
 namespace naivebayes {
 
@@ -17,10 +18,15 @@ class NaiveBayesApp : public ci::app::App {
  public:
   NaiveBayesApp();
 
+
   void draw() override;
   void mouseDown(ci::app::MouseEvent event) override;
   void mouseDrag(ci::app::MouseEvent event) override;
   void keyDown(ci::app::KeyEvent event) override;
+  void update() override;
+  void drawRandParticles();
+  void setup() override;
+
 
   // TODO: Delete this comment. Feel free to play around with these variables
   // provided that you can see the entire UI on your screen.
@@ -31,6 +37,9 @@ class NaiveBayesApp : public ci::app::App {
  private:
   Sketchpad sketchpad_;
   int current_prediction_ = -1;
+  particle_handler particleHandler_;
+  particle particle_;
+
 };
 
 }  // namespace visualizer
