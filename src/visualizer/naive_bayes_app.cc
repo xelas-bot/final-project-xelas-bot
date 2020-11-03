@@ -5,8 +5,7 @@ namespace naivebayes {
     namespace visualizer {
 
         NaiveBayesApp::NaiveBayesApp()
-                : sketchpad_(glm::vec2(kMargin, kMargin), kImageDimension,
-                             kWindowSize - 2 * kMargin) {
+                 {
             particle_handler particleHandlerTemp((int) kWindowSize);
 
             particleHandler_ = particleHandlerTemp;
@@ -19,7 +18,11 @@ namespace naivebayes {
         }
 
         void NaiveBayesApp::setup() {
+            //particleHandler_.addParticle(1);
+
+            particleHandler_.addCustomParticle(400, 400, 15, 0);
             particleHandler_.addParticle(10);
+
             std::ofstream myfile;
             myfile.open(
                     "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testOverload");
@@ -56,23 +59,23 @@ namespace naivebayes {
             ci::gl::drawStringCentered(
                     "Press Delete to slow the sim. Press Enter to speed the sim. Press f to pay resp- save to file. Press s to load a saved file",
                     glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("white"));
-            std::cout << "hello";
 
-            particle *poi;
-            poi = particleHandler_.currentParticles_.at(0);
+
+
             ci::gl::drawStringCentered(
 
-                    "Prediction: " + std::to_string(particleHandler_.getClosestParticle(poi)->position_.x),
+                    "Number of particles " + std::to_string(particleHandler_.particleCount_),
                     glm::vec2(kWindowSize / 2, kWindowSize - kMargin / 2), ci::Color("white"));
+
 
         }
 
         void NaiveBayesApp::mouseDown(ci::app::MouseEvent event) {
-            sketchpad_.HandleBrush(event.getPos());
+            //sketchpad_.HandleBrush(event.getPos());
         }
 
         void NaiveBayesApp::mouseDrag(ci::app::MouseEvent event) {
-            sketchpad_.HandleBrush(event.getPos());
+            //sketchpad_.HandleBrush(event.getPos());
         }
 
         void NaiveBayesApp::keyDown(ci::app::KeyEvent event) {

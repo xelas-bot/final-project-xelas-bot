@@ -74,6 +74,9 @@ namespace naivebayes {
 
                 }
 
+                if (currentParticles_.size() == 1){
+                    currentParticles_.at(i)->update();
+                }
 
             }
 
@@ -108,6 +111,7 @@ namespace naivebayes {
                                               {2 * (rand() / (double) RAND_MAX) - subtractor,
                                                2 * (rand() / (double) RAND_MAX) - subtractor});
                 currentParticles_.push_back(temp);
+                particleCount_++;
             }
 
         }
@@ -136,6 +140,7 @@ namespace naivebayes {
             particle* temp = new particle({x,y},{xVel,yVel});
 
             currentParticles_.push_back(temp);
+            particleCount_++;
 
         }
 
@@ -146,12 +151,13 @@ namespace naivebayes {
 
 
             for (size_t i=0; i<currentParticles_.size(); i++){
-                sumX += currentParticles_.at(i)->velocity_.x;
-                sumY += currentParticles_.at(i)->velocity_.y;
+                sumX += currentParticles_.at(i)->velocity_.x * currentParticles_.at(i)->velocity_.x;
+                sumY += currentParticles_.at(i)->velocity_.y * currentParticles_.at(i)->velocity_.y;
             }
 
             sumXVel = sumX;
             sumYVel = sumY;
+
             return sumX+sumY;
 
 

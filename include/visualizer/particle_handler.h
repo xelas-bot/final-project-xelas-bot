@@ -12,15 +12,15 @@ namespace naivebayes {
     namespace visualizer {
         class particle_handler {
         public:
-            std::vector<particle *> currentParticles_;
+            int particleCount_ = 0;
+
             int windowSize_;
 
             friend std::ostream &operator<<(std::ostream &out, const particle_handler &c);
 
             friend std::istream &operator>>(std::istream &in, particle_handler &c);
 
-            float sumXVel = 0;
-            float sumYVel = 0;
+
 
 
             particle_handler(int windowSize) {
@@ -57,6 +57,12 @@ namespace naivebayes {
 
             void draw();
 
+
+
+        private:
+            std::vector<particle *> currentParticles_;
+            float sumXVel = 0;
+            float sumYVel = 0;
             particle *getClosestParticle(particle *thisParticle);
 
             float getDistanceBetweenParticle(particle thisParticle, particle other);

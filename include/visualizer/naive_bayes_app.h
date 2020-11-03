@@ -3,7 +3,6 @@
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
-#include "sketchpad.h"
 #include "particle_handler.h"
 
 namespace naivebayes {
@@ -36,7 +35,6 @@ class NaiveBayesApp : public ci::app::App {
 
  private:
     double speedMult = 1.0;
-  Sketchpad sketchpad_;
   int current_prediction_ = -1;
   particle_handler particleHandler_;
   particle particle_;
