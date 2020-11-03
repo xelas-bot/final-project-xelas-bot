@@ -1,4 +1,4 @@
-#include <core/rename_this_file.h>
+#include <core/testing.h>
 
 namespace naivebayes {
 

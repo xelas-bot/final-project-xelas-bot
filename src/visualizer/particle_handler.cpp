@@ -132,6 +132,30 @@ namespace naivebayes {
             return out;
 
         }
+        void particle_handler::addCustomParticle(float x, float y, float xVel, float yVel) {
+            particle* temp = new particle({x,y},{xVel,yVel});
+
+            currentParticles_.push_back(temp);
+
+        }
+
+        float particle_handler::sumVel() {
+            float sumX = 0;
+            float sumY = 0;
+
+
+
+            for (size_t i=0; i<currentParticles_.size(); i++){
+                sumX += currentParticles_.at(i)->velocity_.x;
+                sumY += currentParticles_.at(i)->velocity_.y;
+            }
+
+            sumXVel = sumX;
+            sumYVel = sumY;
+            return sumX+sumY;
+
+
+        }
 
         std::istream &operator>>(std::istream &in, particle_handler &c) {
 
