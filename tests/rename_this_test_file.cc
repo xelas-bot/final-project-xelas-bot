@@ -160,20 +160,89 @@ namespace naivebayes {
         }
     }
 
-    TEST_CASE("Test Particle Velocities") {
-        REQUIRE(naivebayes::Placeholder().GetBestClass() == "CS 126");
-    }
-
-    TEST_CASE("Test Particle Positions") {
-        REQUIRE(naivebayes::Placeholder().GetBestClass() == "CS 126");
-    }
-
     TEST_CASE("Test updating particles") {
-        REQUIRE(naivebayes::Placeholder().GetBestClass() == "CS 126");
+        SECTION("Test Position Change") {
+            naivebayes::visualizer::particle_handler particleHandler(875);
+            particleHandler.addCustomParticle(400, 400, -15.0f, 0);
+            REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == 400);
+            particleHandler.update();
+            REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == 385);
+            particleHandler.update();
+            REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == 370);
+
+        }SECTION("Test Velocity/Position Change Simultaneously") {
+            naivebayes::visualizer::particle_handler particleHandler(875);
+            int updateCounter = 0;
+
+            particleHandler.addCustomParticle(400, 400, -15.0f, 0);
+
+            float currentVel = particleHandler.currentParticles_.at(0)->velocity_.x;
+
+            float currentPos = 400;
+            REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == currentPos + currentVel * updateCounter);
+            particleHandler.update();
+            currentPos += currentVel * updateCounter;
+            updateCounter++;
+
+
+            REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == currentPos + currentVel * updateCounter);
+            particleHandler.update();
+            currentPos += currentVel * updateCounter;
+            updateCounter++;
+
+
+            REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == currentPos + currentVel);
+            currentPos += currentVel;
+            particleHandler.currentParticles_.at(0)->velocity_.x = 50.0f;
+            particleHandler.update();
+            currentVel = particleHandler.currentParticles_.at(0)->velocity_.x = 50.0f;
+            REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == currentPos + currentVel);
+
+
+        }
     }
 
     TEST_CASE("Test Operator Overloading") {
-        REQUIRE(naivebayes::Placeholder().GetBestClass() == "CS 126");
+        SECTION("Save and Load from file") {
+            naivebayes::visualizer::particle_handler particleHandler(875);
+            particleHandler.addCustomParticle(400, 400, 0, 15);
+            particleHandler.addCustomParticle(400, 600, 0, 0);
+            particleHandler.addCustomParticle(400, 800, 0, -15);
+
+
+            std::ofstream myfile;
+            myfile.open(
+                    "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testingFile");
+            myfile << particleHandler;
+            myfile.close();
+
+
+            naivebayes::visualizer::particle_handler particleHandlerTwo(875);
+            std::ifstream file;
+            file.open(
+                    "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testingFile");
+            file >> particleHandlerTwo;
+            file.close();
+
+
+            REQUIRE(particleHandlerTwo.currentParticles_.at(0)->position_.y == 400);
+            REQUIRE(particleHandlerTwo.currentParticles_.at(1)->position_.y == 600);
+            REQUIRE(particleHandlerTwo.currentParticles_.at(2)->position_.y == 800);
+
+            REQUIRE(particleHandlerTwo.currentParticles_.at(0)->position_.x == 400);
+            REQUIRE(particleHandlerTwo.currentParticles_.at(1)->position_.x == 400);
+            REQUIRE(particleHandlerTwo.currentParticles_.at(2)->position_.x == 400);
+
+            REQUIRE(particleHandlerTwo.currentParticles_.at(0)->velocity_.x == 0);
+            REQUIRE(particleHandlerTwo.currentParticles_.at(1)->velocity_.x == 0);
+            REQUIRE(particleHandlerTwo.currentParticles_.at(2)->velocity_.x == 0);
+
+            REQUIRE(particleHandlerTwo.currentParticles_.at(0)->velocity_.y == 15);
+            REQUIRE(particleHandlerTwo.currentParticles_.at(1)->velocity_.y == 0);
+            REQUIRE(particleHandlerTwo.currentParticles_.at(2)->velocity_.y == -15);
+
+
+        }
     }
 
 }
