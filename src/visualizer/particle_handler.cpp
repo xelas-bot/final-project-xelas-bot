@@ -4,11 +4,14 @@
 
 #include "visualizer/particle_handler.h"
 #include "random"
-#include "visualizer/naive_bayes_app.h"
+#include "visualizer/visual_app"
 #include "math.h"
 
 namespace naivebayes {
     namespace visualizer {
+        particle_handler::particle_handler(int windowSize) {
+            windowSize_ = windowSize;
+        }
         void particle_handler::update() {
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
@@ -74,7 +77,7 @@ namespace naivebayes {
 
                 }
 
-                if (currentParticles_.size() == 1){
+                if (currentParticles_.size() == 1) {
                     currentParticles_.at(i)->update();
                 }
 
@@ -103,13 +106,17 @@ namespace naivebayes {
 
         void particle_handler::addParticle(int number) {
 
+            particle particleRad;
+            int radius = particleRad.kRadius;
+
             for (int i = 0; i < number; i++) {
                 float x = (float) rand() * windowSize_;
                 float y = (float) rand() * windowSize_;
                 double subtractor = rand() / (double) RAND_MAX;
-                particle *temp = new particle({rand() % (windowSize_ - 60) + 20, rand() % (windowSize_ - 60) + 20},
-                                              {2 * (rand() / (double) RAND_MAX) - subtractor,
-                                               2 * (rand() / (double) RAND_MAX) - subtractor});
+                particle *temp = new particle(
+                        {rand() % (windowSize_ - 2 * radius) + radius, rand() % (windowSize_ - 2 * radius) + radius},
+                        {2 * (rand() / (double) RAND_MAX) - subtractor,
+                         2 * (rand() / (double) RAND_MAX) - subtractor});
                 currentParticles_.push_back(temp);
                 particleCount_++;
             }
@@ -136,8 +143,9 @@ namespace naivebayes {
             return out;
 
         }
+
         void particle_handler::addCustomParticle(float x, float y, float xVel, float yVel) {
-            particle* temp = new particle({x,y},{xVel,yVel});
+            particle *temp = new particle({x, y}, {xVel, yVel});
 
             currentParticles_.push_back(temp);
             particleCount_++;
@@ -149,16 +157,15 @@ namespace naivebayes {
             float sumY = 0;
 
 
-
-            for (size_t i=0; i<currentParticles_.size(); i++){
+            for (size_t i = 0; i < currentParticles_.size(); i++) {
                 sumX += currentParticles_.at(i)->velocity_.x * currentParticles_.at(i)->velocity_.x;
                 sumY += currentParticles_.at(i)->velocity_.y * currentParticles_.at(i)->velocity_.y;
             }
 
-            sumXVel = sumX;
-            sumYVel = sumY;
+            sumXVel_ = sumX;
+            sumYVel_ = sumY;
 
-            return sumX+sumY;
+            return sumX + sumY;
 
 
         }

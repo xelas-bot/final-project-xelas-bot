@@ -12,37 +12,51 @@ namespace naivebayes {
         public:
             glm::vec2 position_ = {0, 0};
             glm::vec2 velocity_ = {1, 1};
-
-            int r = rand() % 255;
-            int g = rand() % 255;
-            int b = rand() % 255;
             static const int kRadius = 40;
 
+            /**
+             * Main Constructor
+             *
+             * @param position vector of position coords
+             * @param velocity vector of velocity
+             */
+            particle(glm::vec2 position, glm::vec2 velocity);
 
-            float re = (float) r / 255.f;
-            float gr = (float) g / 255.f;
-            float bl = (float) b / 255.f;
-
-
-            particle(glm::vec2 position, glm::vec2 velocity) {
-
-                position_ = position;
-                velocity_ = velocity;
-            }
-
+            /**
+             * Default empty constructor
+             */
             particle() {
 
             }
 
+            /**
+             * Draws the particle with its current values
+             */
             void draw();
 
+            /**
+             * updates the particle using current position and velocity values
+             */
             void update();
 
+            /**
+             * Simulates a verticle wall collision
+             */
             void vert_collision();
 
+            /**
+             * Simulates a horizontal wall collision
+             */
             void hor_collision();
 
-            void particle_collision();
+
+        private:
+            int r = rand() % 255;
+            int g = rand() % 255;
+            int b = rand() % 255;
+            float re = (float) r / 255.f;
+            float gr = (float) g / 255.f;
+            float bl = (float) b / 255.f;
 
 
         };

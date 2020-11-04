@@ -1,11 +1,11 @@
-#include <visualizer/naive_bayes_app.h>
+#include <visualizer/visual_app>
 
-using naivebayes::visualizer::NaiveBayesApp;
+using naivebayes::visualizer::VisualApp;
 
-void prepareSettings(NaiveBayesApp::Settings* settings) {
+void prepareSettings(VisualApp::Settings* settings) {
   settings->setResizable(false);
   settings->setFrameRate(60);
 }
 
 // This line is a macro that expands into an "int main()" function.
-CINDER_APP(NaiveBayesApp, ci::app::RendererGl, prepareSettings);
+CINDER_APP(VisualApp, ci::app::RendererGl, prepareSettings);

@@ -1,10 +1,10 @@
-#include <visualizer/naive_bayes_app.h>
+#include <visualizer/visual_app>
 
 namespace naivebayes {
 
     namespace visualizer {
 
-        NaiveBayesApp::NaiveBayesApp()
+        VisualApp::VisualApp()
                  {
             particle_handler particleHandlerTemp((int) kWindowSize);
 
@@ -17,7 +17,7 @@ namespace naivebayes {
             particle_ = particle;
         }
 
-        void NaiveBayesApp::setup() {
+        void VisualApp::setup() {
             //particleHandler_.addParticle(1);
 
             particleHandler_.addCustomParticle(400, 400, 15, 0);
@@ -33,7 +33,7 @@ namespace naivebayes {
 
         }
 
-        void NaiveBayesApp::update() {
+        void VisualApp::update() {
             //ci::Color8u background_color(0, 0, 0);  // black
             //ci::gl::clear(background_color);
             particleHandler_.update();
@@ -41,7 +41,7 @@ namespace naivebayes {
 
         }
 
-        void NaiveBayesApp::draw() {
+        void VisualApp::draw() {
             ci::Color8u background_color(0, 0, 0);  // black
             ci::gl::clear(background_color, true);
             int xCen = (int) kWindowSize / 2;
@@ -70,15 +70,15 @@ namespace naivebayes {
 
         }
 
-        void NaiveBayesApp::mouseDown(ci::app::MouseEvent event) {
+        void VisualApp::mouseDown(ci::app::MouseEvent event) {
             //sketchpad_.HandleBrush(event.getPos());
         }
 
-        void NaiveBayesApp::mouseDrag(ci::app::MouseEvent event) {
+        void VisualApp::mouseDrag(ci::app::MouseEvent event) {
             //sketchpad_.HandleBrush(event.getPos());
         }
 
-        void NaiveBayesApp::keyDown(ci::app::KeyEvent event) {
+        void VisualApp::keyDown(ci::app::KeyEvent event) {
             switch (event.getCode()) {
                 case ci::app::KeyEvent::KEY_s: {
 
@@ -93,7 +93,7 @@ namespace naivebayes {
                 case ci::app::KeyEvent::KEY_RETURN: {
 
 
-                    particleHandler_.speedMultiplyer(speedMult + 0.25);
+                    particleHandler_.speedMultiplyer(speedMult_ + 0.25);
 
 
                     break;
@@ -101,7 +101,7 @@ namespace naivebayes {
                 case ci::app::KeyEvent::KEY_DELETE: {
 
 
-                    particleHandler_.speedMultiplyer(speedMult - 0.25);
+                    particleHandler_.speedMultiplyer(speedMult_ - 0.25);
 
 
                     break;

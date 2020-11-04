@@ -52,14 +52,14 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 list(APPEND CORE_SOURCE_FILES src/core/testing.cc)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
-                            src/visualizer/naive_bayes_app.cc
+        src/visualizer/visual_app.cc
                             src/visualizer/particle.cpp
                             src/visualizer/particle_handler.cpp)
 
-list(APPEND TEST_FILES tests/rename_this_test_file.cc)
+list(APPEND TEST_FILES tests/final_testing_suite.cc)
 
-add_executable(train-model apps/train_model_main.cc ${CORE_SOURCE_FILES})
-target_include_directories(train-model PRIVATE include)
+
+
 
 ci_make_app(
         APP_NAME        sketchpad-classifier

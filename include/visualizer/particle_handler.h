@@ -16,22 +16,31 @@ namespace naivebayes {
 
             int windowSize_;
 
+
             friend std::ostream &operator<<(std::ostream &out, const particle_handler &c);
 
             friend std::istream &operator>>(std::istream &in, particle_handler &c);
 
 
 
+            /**
+             * Main constructor
+             *
+             * @param windowSize the "size" of the container
+             */
+            particle_handler(int windowSize);
 
-            particle_handler(int windowSize) {
-                windowSize_ = windowSize;
+            /**
+             * Default constructor
+             */
+            particle_handler() {}
 
-            }
 
-            particle_handler() {
-
-            }
-
+            /**
+             * Add particles to the container
+             *
+             * @param number of particles to add
+             */
             void addParticle(int number);
 
             /**
@@ -44,6 +53,9 @@ namespace naivebayes {
              */
             void addCustomParticle(float x, float y, float xVel, float yVel);
 
+            /**
+             * Updates pos and vel of all particles in the container
+             */
             void update();
 
             void speedMultiplyer(double speedMult);
@@ -55,14 +67,17 @@ namespace naivebayes {
              */
             float sumVel();
 
+            /**
+             * Draws all particles in the particle container
+             */
             void draw();
 
 
 
         private:
             std::vector<particle *> currentParticles_;
-            float sumXVel = 0;
-            float sumYVel = 0;
+            float sumXVel_ = 0;
+            float sumYVel_ = 0;
             particle *getClosestParticle(particle *thisParticle);
 
             float getDistanceBetweenParticle(particle thisParticle, particle other);
