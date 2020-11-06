@@ -12,29 +12,29 @@ namespace naivebayes {
         particle_handler::particle_handler(int windowSize) {
             windowSize_ = windowSize;
         }
+
         void particle_handler::update() {
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
                 int radius = currentParticles_.at(i)->kRadius;
 
-
                 if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
-                    currentParticles_.at(i)->vert_collision();
-                    currentParticles_.at(i)->update();
+                    currentParticles_.at(i)->VertCollision();
+                    currentParticles_.at(i)->Update();
 
                 } else if (currentParticles_.at(i)->position_.x > windowSize_ - radius &&
                            currentParticles_.at(i)->velocity_.x > 0) {
-                    currentParticles_.at(i)->vert_collision();
-                    currentParticles_.at(i)->update();
+                    currentParticles_.at(i)->VertCollision();
+                    currentParticles_.at(i)->Update();
 
                 } else if (currentParticles_.at(i)->position_.y < radius && currentParticles_.at(i)->velocity_.y < 0) {
-                    currentParticles_.at(i)->hor_collision();
-                    currentParticles_.at(i)->update();
+                    currentParticles_.at(i)->HorCollision();
+                    currentParticles_.at(i)->Update();
 
                 } else if (currentParticles_.at(i)->position_.y > windowSize_ - radius &&
                            currentParticles_.at(i)->velocity_.y > 0) {
-                    currentParticles_.at(i)->hor_collision();
-                    currentParticles_.at(i)->update();
+                    currentParticles_.at(i)->HorCollision();
+                    currentParticles_.at(i)->Update();
 
                 } else if (currentParticles_.size() >= 2) {
                     particle *current;
@@ -66,19 +66,19 @@ namespace naivebayes {
 
                         closest->velocity_ = closestNewVel;
                         current->velocity_ = currentNewVel;
-                        current->update();
-                        closest->update();
+                        current->Update();
+                        closest->Update();
 
 
                     } else {
-                        currentParticles_.at(i)->update();
+                        currentParticles_.at(i)->Update();
                     }
 
 
                 }
 
                 if (currentParticles_.size() == 1) {
-                    currentParticles_.at(i)->update();
+                    currentParticles_.at(i)->Update();
                 }
 
             }
@@ -87,7 +87,7 @@ namespace naivebayes {
 
         void particle_handler::draw() {
             for (size_t i = 0; i < currentParticles_.size(); i++) {
-                currentParticles_.at(i)->draw();
+                currentParticles_.at(i)->Draw();
             }
 
         }

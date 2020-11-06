@@ -71,11 +71,12 @@ namespace naivebayes {
              * Draws all particles in the particle container
              */
             void draw();
+            std::vector<particle *> currentParticles_;
 
 
 
         private:
-            std::vector<particle *> currentParticles_;
+
             float sumXVel_ = 0;
             float sumYVel_ = 0;
             particle *getClosestParticle(particle *thisParticle);

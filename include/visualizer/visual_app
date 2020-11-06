@@ -4,15 +4,12 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "particle_handler.h"
+#include "histogram.h"
 
 namespace naivebayes {
 
     namespace visualizer {
 
-/**
- * Allows a user to draw a digit on a sketchpad and uses Naive Bayes to
- * classify it.
- */
         class VisualApp : public ci::app::App {
         public:
             VisualApp();
@@ -36,6 +33,7 @@ namespace naivebayes {
             const size_t kImageDimension = 28;
 
         private:
+            histogram histogram_;
             double speedMult_ = 1.0;
             particle_handler particleHandler_;
             particle particle_;

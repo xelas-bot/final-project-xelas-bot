@@ -54,7 +54,8 @@ list(APPEND CORE_SOURCE_FILES src/core/testing.cc)
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
         src/visualizer/visual_app.cc
                             src/visualizer/particle.cpp
-                            src/visualizer/particle_handler.cpp)
+                            src/visualizer/particle_handler.cpp
+                            src/visualizer/histogram.cpp)
 
 list(APPEND TEST_FILES tests/final_testing_suite.cc)
 

@@ -32,22 +32,22 @@ namespace naivebayes {
             /**
              * Draws the particle with its current values
              */
-            void draw();
+            void Draw();
 
             /**
              * updates the particle using current position and velocity values
              */
-            void update();
+            void Update();
 
             /**
              * Simulates a verticle wall collision
              */
-            void vert_collision();
+            void VertCollision();
 
             /**
              * Simulates a horizontal wall collision
              */
-            void hor_collision();
+            void HorCollision();
 
 
         private:

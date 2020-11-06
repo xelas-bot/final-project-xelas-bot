@@ -4,9 +4,8 @@ namespace naivebayes {
 
     namespace visualizer {
 
-        VisualApp::VisualApp()
-                 {
-            particle_handler particleHandlerTemp((int) kWindowSize);
+        VisualApp::VisualApp() {
+            particle_handler particleHandlerTemp((int) 600);
 
             particleHandler_ = particleHandlerTemp;
 
@@ -15,6 +14,8 @@ namespace naivebayes {
 
             particle particle({kWindowSize, kWindowSize}, {-10, -10});
             particle_ = particle;
+
+            histogram_ = histogram(particleHandler_,100,{150,700});
         }
 
         void VisualApp::setup() {
@@ -30,13 +31,15 @@ namespace naivebayes {
             myfile.close();
 
 
-
         }
 
         void VisualApp::update() {
             //ci::Color8u background_color(0, 0, 0);  // black
             //ci::gl::clear(background_color);
+
+            histogram_ = histogram(particleHandler_,100,{150,700});
             particleHandler_.update();
+
 
 
         }
@@ -55,11 +58,12 @@ namespace naivebayes {
 
             particleHandler_.draw();
 
+            histogram_.Draw();
+
 
             ci::gl::drawStringCentered(
                     "Press Delete to slow the sim. Press Enter to speed the sim. Press f to pay resp- save to file. Press s to load a saved file",
                     glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("white"));
-
 
 
             ci::gl::drawStringCentered(
@@ -86,7 +90,7 @@ namespace naivebayes {
                     std::ifstream file;
                     file.open(
                             "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testOverload");
-                    file >>particleHandler_;
+                    file >> particleHandler_;
                     file.close();
 
                 }
@@ -115,7 +119,6 @@ namespace naivebayes {
                     myfile << particleHandler_;
                     myfile.close();
                 }
-
 
 
             }
