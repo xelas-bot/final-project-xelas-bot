@@ -25,8 +25,10 @@ namespace naivebayes {
             }
 
             void Draw();
-            void DrawChart(glm::vec2 leftCorner);
+            glm::vec2 DrawChart(glm::vec2 leftCorner);
             void Update();
+            int GetCountBetweenInterval(float sOne, float sTwo);
+            float MaxParticleSpeed();
 
 
 

@@ -5,7 +5,7 @@ namespace naivebayes {
     namespace visualizer {
 
         VisualApp::VisualApp() {
-            particle_handler particleHandlerTemp((int) 600);
+            particle_handler particleHandlerTemp((int) 700);
 
             particleHandler_ = particleHandlerTemp;
 
@@ -22,7 +22,7 @@ namespace naivebayes {
             //particleHandler_.addParticle(1);
 
             particleHandler_.addCustomParticle(400, 400, 15, 0);
-            particleHandler_.addParticle(10);
+            particleHandler_.addParticle(49);
 
             std::ofstream myfile;
             myfile.open(

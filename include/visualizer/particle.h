@@ -12,7 +12,7 @@ namespace naivebayes {
         public:
             glm::vec2 position_ = {0, 0};
             glm::vec2 velocity_ = {1, 1};
-            static const int kRadius = 40;
+            static const int kRadius = 20;
 
             /**
              * Main Constructor
