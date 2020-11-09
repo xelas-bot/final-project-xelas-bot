@@ -16,7 +16,7 @@ namespace naivebayes {
         void particle_handler::update() {
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
-                int radius = currentParticles_.at(i)->kRadius;
+                int radius = currentParticles_.at(i)->radius_;
 
                 if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
                     currentParticles_.at(i)->VertCollision();
@@ -42,7 +42,7 @@ namespace naivebayes {
                     particle *closest = getClosestParticle(current);
 
 
-                    if (getDistanceBetweenParticle(*currentParticles_.at(i), *closest) < 2 * radius
+                    if (getDistanceBetweenParticle(*currentParticles_.at(i), *closest) < radius + closest->radius_
                         &&
                         glm::dot((current->velocity_ - closest->velocity_), (current->position_ - closest->position_)) <
                         0) {
@@ -52,15 +52,18 @@ namespace naivebayes {
                         glm::vec2 disDiff = current->position_ - closest->position_;
                         glm::vec2 disDiffTwo = closest->position_ - current->position_;
 
+                        float massMultiplierOne =(2*closest->mass_)/(float )(current->mass_+closest->mass_);
+                        float massMultiplierTwo =(2*current->mass_)/(float )(current->mass_+closest->mass_);
+
 
                         glm::vec2 currentNewVel =
                                 velCur -
-                                (((glm::dot(velCur - velClose, disDiff)) /
+                                (massMultiplierOne*((glm::dot(velCur - velClose, disDiff)) /
                                   (glm::length(disDiff) * glm::length(disDiff))) * (disDiff));
 
 
                         glm::vec2 closestNewVel = velClose -
-                                                  ((glm::dot(velClose - velCur, disDiffTwo)) /
+                                                  massMultiplierTwo*((glm::dot(velClose - velCur, disDiffTwo)) /
                                                    (glm::length(disDiffTwo) * glm::length(disDiffTwo))) *
                                                   (disDiffTwo);
 
@@ -104,10 +107,10 @@ namespace naivebayes {
         }
 
 
-        void particle_handler::addParticle(int number) {
+        void particle_handler::addParticle(int number, int mass, int radius) {
 
             particle particleRad;
-            int radius = particleRad.kRadius;
+
 
             for (int i = 0; i < number; i++) {
                 float x = (float) rand() * windowSize_;
@@ -116,7 +119,7 @@ namespace naivebayes {
                 particle *temp = new particle(
                         {rand() % (windowSize_ - 2 * radius) + radius, rand() % (windowSize_ - 2 * radius) + radius},
                         {2 * (rand() / (double) RAND_MAX) - subtractor,
-                         2 * (rand() / (double) RAND_MAX) - subtractor});
+                         2 * (rand() / (double) RAND_MAX) - subtractor}, mass, radius);
                 currentParticles_.push_back(temp);
                 particleCount_++;
             }

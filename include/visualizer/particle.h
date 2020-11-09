@@ -12,7 +12,8 @@ namespace naivebayes {
         public:
             glm::vec2 position_ = {0, 0};
             glm::vec2 velocity_ = {1, 1};
-            static const int kRadius = 20;
+            int radius_ = 20;
+            int mass_ = 40;
 
             /**
              * Main Constructor
@@ -21,6 +22,9 @@ namespace naivebayes {
              * @param velocity vector of velocity
              */
             particle(glm::vec2 position, glm::vec2 velocity);
+
+
+            particle(glm::vec2 position, glm::vec2 velocity, int mass, int radius);
 
             /**
              * Default empty constructor

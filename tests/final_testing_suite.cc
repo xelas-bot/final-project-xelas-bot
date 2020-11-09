@@ -42,7 +42,7 @@ namespace naivebayes {
             }
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y != 15.0f);
             REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.y != -6.89f);
-            REQUIRE(velSum == particleHandler.sumVel());
+            REQUIRE(velSum == Approx(particleHandler.sumVel()) );
         }SECTION("Diagonal Collision") {
             naivebayes::visualizer::particle_handler particleHandler(875);
             particleHandler.addCustomParticle(400, 600, 10, 15);
@@ -112,7 +112,7 @@ namespace naivebayes {
             naivebayes::visualizer::particle_handler particleHandler(875);
             particleHandler.addCustomParticle(400, 400, 15.0f, 0);
 
-            int radius = particleHandler.currentParticles_.at(0)->kRadius;
+            int radius = particleHandler.currentParticles_.at(0)->radius_;
 
 
             float velSum = particleHandler.sumVel();
@@ -137,7 +137,7 @@ namespace naivebayes {
             naivebayes::visualizer::particle_handler particleHandler(875);
             particleHandler.addCustomParticle(400, 400, 0, 15.0f);
 
-            int radius = particleHandler.currentParticles_.at(0)->kRadius;
+            int radius = particleHandler.currentParticles_.at(0)->radius_;
 
 
             float velSum = particleHandler.sumVel();

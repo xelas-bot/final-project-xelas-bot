@@ -14,9 +14,16 @@ namespace naivebayes {
             velocity_ = velocity;
         }
 
+        particle::particle(glm::vec2 position, glm::vec2 velocity, int mass, int radius) {
+            position_ = position;
+            velocity_ = velocity;
+            mass_ = mass;
+            radius_ = radius;
+        }
+
         void particle::Draw() {
             ci::gl::color(re, gr, bl);
-            ci::gl::drawSolidCircle(position_, kRadius);
+            ci::gl::drawSolidCircle(position_, (float )radius_);
 
         }
 

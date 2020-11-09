@@ -41,7 +41,7 @@ namespace naivebayes {
              *
              * @param number of particles to add
              */
-            void addParticle(int number);
+            void addParticle(int number, int mass, int radius);
 
             /**
              * Testing method to add particles in custom locations with custom velocities

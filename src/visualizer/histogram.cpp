@@ -31,20 +31,21 @@ namespace naivebayes {
 
             //DrawChart({leftCorner_});
 
-            glm::vec2 secVec = DrawChart(DrawChart({leftCorner_}));
-            DrawChart(secVec);
+            glm::vec2 firstVec = DrawChart(leftCorner_,1);
+            glm::vec2 secVec = DrawChart(firstVec,100);
+            DrawChart(secVec,200);
 
 
         }
 
-        int histogram::GetCountBetweenInterval(float sOne, float sTwo) {
+        int histogram::GetCountBetweenInterval(float sOne, float sTwo, int mass) {
 
             float temp = 0;
             int count=0;
             for (size_t i = 0; i < container_.currentParticles_.size(); i++) {
                 temp = glm::length(container_.currentParticles_.at(i)->velocity_);
 
-                if (temp < sTwo && temp > sOne){
+                if (temp < sTwo && temp > sOne && container_.currentParticles_.at(i)->mass_ == mass){
                     count++;
                 }
 
@@ -54,12 +55,12 @@ namespace naivebayes {
             return count;
         }
 
-        float histogram::MaxParticleSpeed() {
-            float max_speed = glm::length(container_.currentParticles_.at(0)->velocity_);
+        float histogram::MaxParticleSpeed(int mass) {
+            float max_speed = 0;
 
             for (size_t i = 0; i < container_.currentParticles_.size(); i++) {
                 float temp = glm::length(container_.currentParticles_.at(i)->velocity_);
-                if (temp >= max_speed) {
+                if (temp >= max_speed && container_.currentParticles_.at(i)->mass_ == mass) {
                     max_speed = temp;
                 }
             }
@@ -69,7 +70,7 @@ namespace naivebayes {
         }
 
 
-        glm::vec2 histogram::DrawChart(glm::vec2 leftCorner) {
+        glm::vec2 histogram::DrawChart(glm::vec2 leftCorner, int mass) {
             ci::gl::lineWidth(1);
             ci::gl::drawLine({leftCorner.x + 10, leftCorner.y + 10},
                              {leftCorner.x + 10, leftCorner.y + windowSize_ - 10});
@@ -110,14 +111,14 @@ namespace naivebayes {
             int lineW=5;
 
 
-            double max = ceil((double ) MaxParticleSpeed());
-            float interval = (float )max/5;
+            double max = ceil((double ) MaxParticleSpeed(mass));
+            float interval = (float  )max/5;
 
-            int one = GetCountBetweenInterval(0, interval);
-            int two = GetCountBetweenInterval(interval, 2*interval);
-            int three = GetCountBetweenInterval(2*interval, 3*interval);
-            int four = GetCountBetweenInterval(3*interval, 4*interval);
-            int five = GetCountBetweenInterval(4*interval, 5*interval);
+            int one = GetCountBetweenInterval(0, interval,mass);
+            int two = GetCountBetweenInterval(interval, 2*interval,mass);
+            int three = GetCountBetweenInterval(2*interval, 3*interval,mass);
+            int four = GetCountBetweenInterval(3*interval, 4*interval,mass);
+            int five = GetCountBetweenInterval(4*interval, 5*interval,mass);
 
             float heightOne =(float) ((float) one / container_.particleCount_) * yMax;
             float heightTwo =(float) ((float) two / container_.particleCount_) * yMax;
