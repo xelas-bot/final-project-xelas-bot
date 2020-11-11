@@ -24,11 +24,13 @@ namespace naivebayes {
 
             }
 
-            void Draw();
+            void Draw(std::vector<int> masses);
             glm::vec2 DrawChart(glm::vec2 leftCorner, int mass);
             void Update();
             int GetCountBetweenInterval(float sOne, float sTwo, int mass);
             float MaxParticleSpeed(int mass);
+            void DrawBoundingSquare();
+            void DrawLabels(glm::vec2 corner, float lineL, std::vector<int> counts);
 
 
 
@@ -37,6 +39,7 @@ namespace naivebayes {
             particle_handler container_;
             int windowSize_;
             glm::vec2 leftCorner_;
+            int maxCount = 0;
 
         };
 

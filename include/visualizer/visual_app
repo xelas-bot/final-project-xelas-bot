@@ -30,6 +30,7 @@ namespace naivebayes {
 
             const double kWindowSize = 875;
             const double kMargin = 100;
+            const double kContainerSize = 680;
             const size_t kImageDimension = 28;
 
         private:

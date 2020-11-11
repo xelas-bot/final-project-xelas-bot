@@ -5,7 +5,7 @@ namespace naivebayes {
     namespace visualizer {
 
         VisualApp::VisualApp() {
-            particle_handler particleHandlerTemp((int) 875);
+            particle_handler particleHandlerTemp((int) kContainerSize);
 
             particleHandler_ = particleHandlerTemp;
 
@@ -22,10 +22,11 @@ namespace naivebayes {
             //particleHandler_.addParticle(1);
 
 
-            particleHandler_.addParticle(50,1,20);
+            particleHandler_.addParticle(10,1,10);
 
-            //particleHandler_.addParticle(3,200,60);
-            //particleHandler_.addParticle(1,100,60);
+
+            particleHandler_.addParticle(10,4,15);
+            particleHandler_.addParticle(25,3,20);
 
             std::ofstream myfile;
             myfile.open(
@@ -50,18 +51,17 @@ namespace naivebayes {
         void VisualApp::draw() {
             ci::Color8u background_color(0, 0, 0);  // black
             ci::gl::clear(background_color, true);
-            int xCen = (int) kWindowSize / 2;
-            int yCen = (int) kWindowSize / 2;
-            int pixelCount = 0;
+            ci::gl::lineWidth(1);
+            ci::gl::drawLine({0,0},{kContainerSize,0});
+            ci::gl::drawLine({kContainerSize,0},{kContainerSize,kContainerSize});
+            ci::gl::drawLine({kContainerSize,kContainerSize},{0,kContainerSize});
+            ci::gl::drawLine({1,kContainerSize},{1,0});
 
-            float x = (float) cos(getElapsedSeconds()) * 100.0f;
-            float y = (float) sin(getElapsedSeconds()) * 100.0f;
-            ci::Color("red");
-            //ci::gl::drawSolidCircle( glm::vec2 ( x + getWindowSize().x/2, y + getWindowSize().y/2 ), 50 );
+
 
             particleHandler_.draw();
 
-            histogram_.Draw();
+            histogram_.Draw({1,3,4});
 
 
             ci::gl::drawStringCentered(

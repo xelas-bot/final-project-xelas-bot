@@ -7,10 +7,55 @@
 namespace naivebayes {
     namespace visualizer {
 
-        void histogram::Draw() {
+        void histogram::Draw(std::vector<int> masses) {
+
+            ci::Font("ariel", 8);
+            ci::gl::drawStringCentered(
+                    "Number Of Particles: \n Each Horizontal\n Bar is 5 particles",
+                    glm::vec2(leftCorner_.x-50,leftCorner_.y+20), ci::Color("white"));
+
 
             // Draw Box
+            DrawBoundingSquare();
 
+            glm::vec2 firstVec = DrawChart({leftCorner_.x+40,leftCorner_.y}, masses[0]);
+            glm::vec2 secVec = DrawChart({firstVec.x+40,leftCorner_.y}, masses[1]);
+            DrawChart({secVec.x+40,leftCorner_.y}, masses[2]);
+
+
+        }
+        void histogram::DrawLabels(glm::vec2 corner, float lineL, std::vector<int> counts) {
+            float interval = lineL/5;
+            std::vector<int> rounded;
+            int toPush =0;
+
+            float max = (float ) (container_.currentParticles_.size() * (double)0.33333333333);
+
+
+            for (int i =1; i<=5; i++){
+                rounded.push_back((int )round((((double)i * (20))/100) * max));
+
+            }
+
+
+
+
+            for (int i =1; i<=5; i++){
+                ci::gl::drawLine({corner.x,corner.y - ((float)rounded[i-1]/max)*lineL}, {corner.x +lineL +20, corner.y - ((float)rounded[i-1]/max)*lineL});
+
+
+                ci::Font("arial", 8);
+                ci::gl::drawStringCentered(
+                        std::to_string(rounded.at(i-1)),
+                        {corner.x-8,corner.y - (((float)rounded[i-1]/max)*lineL)-5}, ci::Color("white"));
+            }
+
+
+
+
+        }
+
+        void histogram::DrawBoundingSquare() {
             ci::gl::lineWidth(1);
             ci::gl::drawLine(leftCorner_, {leftCorner_.x, leftCorner_.y + windowSize_});
             glm::vec2 tempVec = {leftCorner_.x, leftCorner_.y + windowSize_};
@@ -27,25 +72,16 @@ namespace naivebayes {
             ci::gl::lineWidth(1);
             ci::gl::drawLine(tempVec, {tempVec.x - 5 * windowSize_, tempVec.y});
             tempVec = {tempVec.x - 5 * windowSize_, tempVec.y};
-
-
-            //DrawChart({leftCorner_});
-
-            glm::vec2 firstVec = DrawChart(leftCorner_,1);
-            glm::vec2 secVec = DrawChart(firstVec,100);
-            DrawChart(secVec,200);
-
-
         }
 
         int histogram::GetCountBetweenInterval(float sOne, float sTwo, int mass) {
 
             float temp = 0;
-            int count=0;
+            int count = 0;
             for (size_t i = 0; i < container_.currentParticles_.size(); i++) {
                 temp = glm::length(container_.currentParticles_.at(i)->velocity_);
 
-                if (temp < sTwo && temp > sOne && container_.currentParticles_.at(i)->mass_ == mass){
+                if (temp < sTwo && temp >= sOne && container_.currentParticles_.at(i)->mass_ == mass) {
                     count++;
                 }
 
@@ -56,6 +92,11 @@ namespace naivebayes {
         }
 
         float histogram::MaxParticleSpeed(int mass) {
+
+            if (container_.currentParticles_.size() ==1){
+                return glm::length(container_.currentParticles_.at(0)->velocity_);
+            }
+
             float max_speed = 0;
 
             for (size_t i = 0; i < container_.currentParticles_.size(); i++) {
@@ -78,6 +119,9 @@ namespace naivebayes {
             ci::gl::drawLine({leftCorner.x + 10, leftCorner.y + windowSize_ - 10},
                              {leftCorner.x + 10 + windowSize_, leftCorner.y + windowSize_ - 10});
 
+
+
+
             int pixelWorkspace = (int) leftCorner.x + 10 + (int) windowSize_ - (int) leftCorner.x + 10;
 
             int xOfFirstLine = (int) pixelWorkspace / 3;
@@ -86,11 +130,17 @@ namespace naivebayes {
             int yMax = (int) leftCorner.y + (int) windowSize_ - 10 - (int) leftCorner.y + 10 - 20;
 
 
+
+
+            DrawLabels({leftCorner.x + 10, leftCorner.y + windowSize_ - 10},(float)yMax, {});
+
+
+
+
+
             ci::gl::lineWidth((float) pixelWorkspace);
 
 
-            float heightNeg = 0;
-            float heightPos = 0;
             int numNeg = 0;
             int numPos = 0;
 
@@ -103,47 +153,58 @@ namespace naivebayes {
                 }
             }
 
+            int lineW = 10;
+
+
+            double max = ceil((double) MaxParticleSpeed(mass)) + 1;
+
+            float interval = (float) max / 10;
+
+            std::vector<int> intCounts;
+            std::vector<float> heights;
+            for (int i=1; i<=10; i++){
+
+                intCounts.push_back(GetCountBetweenInterval(((float )i-1)*(float )interval, ((float )i)*(float )interval, mass));
+
+            }
+
+            std::cout << "{";
+            for (size_t i = 0; i<intCounts.size(); i++){
+                std::cout << intCounts.at(i);
+
+            }
+            std::cout << "}";
 
 
 
-            heightNeg = (float) ((float) numNeg / container_.particleCount_) * yMax;
-            heightPos = (float) ((float) numPos / container_.particleCount_) * yMax;
-            int lineW=5;
+
+            for (size_t i = 0; i<intCounts.size(); i++){
 
 
-            double max = ceil((double ) MaxParticleSpeed(mass));
-            float interval = (float  )max/5;
-
-            int one = GetCountBetweenInterval(0, interval,mass);
-            int two = GetCountBetweenInterval(interval, 2*interval,mass);
-            int three = GetCountBetweenInterval(2*interval, 3*interval,mass);
-            int four = GetCountBetweenInterval(3*interval, 4*interval,mass);
-            int five = GetCountBetweenInterval(4*interval, 5*interval,mass);
-
-            float heightOne =(float) ((float) one / container_.particleCount_) * yMax;
-            float heightTwo =(float) ((float) two / container_.particleCount_) * yMax;
-            float heightThree =(float) ((float) three / container_.particleCount_) * yMax;
-            float heightFour =(float) ((float) four / container_.particleCount_) * yMax;
-            float heightFive =(float) ((float) five / container_.particleCount_) * yMax;
+                heights.push_back((float) ((float) 3*intCounts[i] / (float )container_.currentParticles_.size()) * (float )yMax);
+            }
+            std::cout << "{";
+            for (size_t i = 0; i<heights.size(); i++){
+                std::cout << heights.at(i);
+                std::cout << ",";
+            }
+            std::cout << "}";
 
 
 
-            ci::gl::drawLine({newCorner.x + lineW, newCorner.y},
-                             {newCorner.x + lineW, newCorner.y - heightOne});
+            for (size_t i = 1; i<=heights.size(); i++){
+                ci::gl::drawLine({newCorner.x + (i* lineW) -5, newCorner.y},
+                                 {newCorner.x + (i* lineW) -5, newCorner.y - heights[i-1]});
+
+            }
 
 
-            ci::gl::drawLine({newCorner.x + 3 * lineW, newCorner.y},
-                             {newCorner.x + 3 * lineW, newCorner.y - heightTwo});
-
-            ci::gl::drawLine({newCorner.x + 5 * lineW, newCorner.y},
-                             {newCorner.x + 5 * lineW, newCorner.y - heightThree});
-
-            ci::gl::drawLine({newCorner.x + 7 * lineW, newCorner.y},
-                             {newCorner.x + 7 * lineW, newCorner.y - heightFour});
 
 
-            ci::gl::drawLine({newCorner.x + 9 * lineW, newCorner.y},
-                             {newCorner.x + 9 * lineW, newCorner.y - heightFive});
+
+
+
+
 
 
 
