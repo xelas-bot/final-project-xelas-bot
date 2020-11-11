@@ -15,7 +15,7 @@ namespace naivebayes {
             particle particle({kWindowSize, kWindowSize}, {-10, -10});
             particle_ = particle;
 
-            histogram_ = histogram(particleHandler_,100,{150,700});
+            histogram_ = Histogram(particleHandler_, 100, {150, 700});
         }
 
         void VisualApp::setup() {
@@ -41,7 +41,7 @@ namespace naivebayes {
             //ci::Color8u background_color(0, 0, 0);  // black
             //ci::gl::clear(background_color);
 
-            histogram_ = histogram(particleHandler_,100,{150,700});
+            histogram_ = Histogram(particleHandler_, 100, {150, 700});
             particleHandler_.update();
 
 

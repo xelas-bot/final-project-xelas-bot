@@ -11,35 +11,73 @@ namespace naivebayes {
     namespace visualizer {
 
 
-        class histogram {
+        class Histogram {
 
         public:
-            histogram(particle_handler container, int windowSize, glm::vec2 leftCorner){
-                container_ = container;
-                windowSize_ = windowSize;
-                leftCorner_ = leftCorner;
-
-            }
-            histogram(){
-
+            Histogram(particle_handler container, int windowSize, glm::vec2 leftCorner);
+            Histogram(){
             }
 
-            void Draw(std::vector<int> masses);
-            glm::vec2 DrawChart(glm::vec2 leftCorner, int mass);
-            void Update();
-            int GetCountBetweenInterval(float sOne, float sTwo, int mass);
+            /**
+             * Returns max speed of the particles within container, made public for testing purposes
+             * @param mass seperate particles by mass
+             * @return max speed
+             */
             float MaxParticleSpeed(int mass);
-            void DrawBoundingSquare();
-            void DrawLabels(glm::vec2 corner, float lineL, std::vector<int> counts);
+
+            /**
+             * Draws current histogram
+             * @param masses list of three massses to graph
+             */
+            void Draw(std::vector<int> masses);
+
+            /**
+             * Updates histogram
+             */
+            void Update();
+
 
 
 
 
         private:
             particle_handler container_;
-            int windowSize_;
-            glm::vec2 leftCorner_;
-            int maxCount = 0;
+            int window_size_;
+            glm::vec2 left_corner_;
+            int max_count_ = 0;
+
+            /**
+             * Draws the chart given input data
+             *
+             * @param leftCorner positioning vector
+             * @param mass of particles
+             * @return vector of new corner for further histograms
+             */
+            glm::vec2 DrawChart(glm::vec2 leftCorner, int mass);
+
+            /**
+             * Returns number of particles between intervals
+             *
+             * @param sOne first interval
+             * @param sTwo second interval
+             * @param mass of particle to choose from
+             * @return count of particles between interval
+             */
+            int GetCountBetweenInterval(float sOne, float sTwo, int mass);
+
+            /**
+             * Draws initial bouding square for histogram
+             */
+            void DrawBoundingSquare();
+
+            /**
+             * Draws number labels
+             *
+             * @param corner of histogram
+             * @param lineL line length of axes
+             * @param counts data needed to produce labels
+             */
+            void DrawLabels(glm::vec2 corner, float lineL, std::vector<int> counts);
 
         };
 

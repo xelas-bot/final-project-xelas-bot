@@ -158,17 +158,19 @@ namespace naivebayes {
         float particle_handler::sumVel() {
             float sumX = 0;
             float sumY = 0;
+            float KE = 0;
 
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
                 sumX += currentParticles_.at(i)->velocity_.x * currentParticles_.at(i)->velocity_.x;
                 sumY += currentParticles_.at(i)->velocity_.y * currentParticles_.at(i)->velocity_.y;
+                KE += (glm::length(currentParticles_.at(i)->velocity_) * glm::length(currentParticles_.at(i)->velocity_)) * (currentParticles_.at(i)->mass_);
             }
 
             sumXVel_ = sumX;
             sumYVel_ = sumY;
 
-            return sumX + sumY;
+            return KE;
 
 
         }

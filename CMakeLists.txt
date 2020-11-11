@@ -49,13 +49,14 @@ get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
-list(APPEND CORE_SOURCE_FILES src/core/testing.cc)
+list(APPEND CORE_SOURCE_FILES src/core/testing.cc src/visualizer/histogram.cpp)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
         src/visualizer/visual_app.cc
                             src/visualizer/particle.cpp
                             src/visualizer/particle_handler.cpp
-                            src/visualizer/histogram.cpp)
+                            src/visualizer/histogram.cpp
+                            include/visualizer/histogram.h)
 
 list(APPEND TEST_FILES tests/final_testing_suite.cc)
 

@@ -21,6 +21,7 @@ namespace naivebayes {
             radius_ = radius;
         }
 
+
         void particle::Draw() {
             ci::gl::color(re, gr, bl);
             ci::gl::drawSolidCircle(position_, (float )radius_);

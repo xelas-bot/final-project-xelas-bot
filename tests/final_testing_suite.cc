@@ -5,8 +5,21 @@
 #include <core/testing.h>
 #include "visualizer/particle_handler.h"
 #include "visualizer/particle.h"
+#include "visualizer/histogram.h"
+#define private public
 
 namespace naivebayes {
+    TEST_CASE("Histogram"){
+        SECTION("Test Histogram Creation without Errors"){
+            naivebayes::visualizer::particle_handler particleHandler(875);
+            particleHandler.addCustomParticle(400, 400, 10, 0);
+            particleHandler.addCustomParticle(600, 400, -5, 0);
+            naivebayes::visualizer::Histogram histogram = visualizer::Histogram(particleHandler, 100, {150, 700});
+
+            REQUIRE(histogram.MaxParticleSpeed(1) == 10);
+            //Only public method in histogram is draw so unable to test
+        }
+    }
 
 
     TEST_CASE("Test Distance/Collisions") {
@@ -154,6 +167,84 @@ namespace naivebayes {
 
 
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y == -15.0f);
+            REQUIRE(velSum == particleHandler.sumVel());
+
+
+        }
+        SECTION("Erroneous Collisions") {
+            // just testing for position bounding and bouncing no need to check for velocity
+            naivebayes::visualizer::particle_handler particleHandler(875);
+            particleHandler.addCustomParticle(400, 400, -15.0f, 0);
+            particleHandler.addCustomParticle(419, 400, 15.0f, 0);
+
+            int radius = particleHandler.currentParticles_.at(0)->radius_;
+
+
+            float velSum = particleHandler.sumVel();
+
+            REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.x == -15.0f);
+            REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.x == 15.0f);
+
+            for (int i =0; i<20; i++){
+                particleHandler.update();
+            }
+
+            REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.x == -15.0f);
+            REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.x == 15.0f);
+
+            REQUIRE(velSum == particleHandler.sumVel());
+
+
+        }SECTION("Erroneous Collision Detection") {
+            // just testing for position bounding and bouncing no need to check for velocity
+            naivebayes::visualizer::particle_handler particleHandler(875);
+            particleHandler.addCustomParticle(400, 400, 15.0f, 0);
+            particleHandler.addCustomParticle(419, 500, 15.0f, 0);
+
+            int radius = particleHandler.currentParticles_.at(0)->radius_;
+
+
+            float velSum = particleHandler.sumVel();
+
+            REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.x == 15.0f);
+            REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.x == 15.0f);
+
+            for (int i =0; i<20; i++){
+                particleHandler.update();
+            }
+
+            REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.x == 15.0f);
+            REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.x == 15.0f);
+
+            REQUIRE(velSum == particleHandler.sumVel());
+
+
+        }SECTION("Different Mass Collisions Energy Conserved") {
+            // just testing for position bounding and bouncing no need to check for velocity
+            naivebayes::visualizer::particle_handler particleHandler(875);
+            particleHandler.addCustomParticle(400, 400, 0, 15.0f);
+            particleHandler.addCustomParticle(400, 450, 0, -15.0f);
+
+            particleHandler.currentParticles_.at(0)->mass_ = 5;
+
+
+            REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y == 15.0f);
+            REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.y == -15.0f);
+
+
+            float velSum = particleHandler.sumVel();
+
+
+            while (particleHandler.currentParticles_.at(0)->velocity_.y == 15.0f) {
+                particleHandler.update();
+            }
+
+
+
+            REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y != 15.0f);
+            REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y != -15.0f);
+
+
             REQUIRE(velSum == particleHandler.sumVel());
 
 

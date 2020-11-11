@@ -34,7 +34,7 @@ namespace naivebayes {
             const size_t kImageDimension = 28;
 
         private:
-            histogram histogram_;
+            Histogram histogram_;
             double speedMult_ = 1.0;
             particle_handler particleHandler_;
             particle particle_;
