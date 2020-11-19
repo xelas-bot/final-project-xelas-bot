@@ -14,6 +14,7 @@ namespace naivebayes {
 
             glm::vec2 position_ = {0, 0};
             glm::vec2 velocity_ = {1, 1};
+            glm::vec2 accel_ = {0, 1};
             int radius_ = 20;
             int mass_ = 1;
 

@@ -56,6 +56,8 @@ list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
                             src/visualizer/particle.cpp
                             src/visualizer/particle_handler.cpp
                             src/visualizer/histogram.cpp
+                            src/visualizer/player.cpp
+                            include/visualizer/player.h
                             include/visualizer/histogram.h)
 
 list(APPEND TEST_FILES tests/final_testing_suite.cc)

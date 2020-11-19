@@ -13,7 +13,7 @@ namespace naivebayes {
             windowSize_ = windowSize;
         }
 
-        void particle_handler::update() {
+        void particle_handler::Update() {
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
                 int radius = currentParticles_.at(i)->radius_;

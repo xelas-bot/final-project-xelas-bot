@@ -5,6 +5,7 @@
 #include "cinder/gl/gl.h"
 #include "particle_handler.h"
 #include "histogram.h"
+#include "visualizer/player.h"
 
 namespace naivebayes {
 
@@ -38,6 +39,7 @@ namespace naivebayes {
             double speedMult_ = 1.0;
             particle_handler particleHandler_;
             particle particle_;
+            player player_;
 
         };
 

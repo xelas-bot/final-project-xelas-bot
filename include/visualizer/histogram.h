@@ -15,8 +15,7 @@ namespace naivebayes {
 
         public:
             Histogram(particle_handler container, int windowSize, glm::vec2 leftCorner);
-            Histogram(){
-            }
+            Histogram(){}
 
             /**
              * Returns max speed of the particles within container, made public for testing purposes

@@ -36,7 +36,7 @@ namespace naivebayes {
             float velSum = particleHandler.sumVel();
 
             while (particleHandler.currentParticles_.at(0)->velocity_.x == 10.0f) {
-                particleHandler.update();
+                particleHandler.Update();
             }
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.x != 10.0f);
             REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.x != -5.0f);
@@ -51,7 +51,7 @@ namespace naivebayes {
             float velSum = particleHandler.sumVel();
 
             while (particleHandler.currentParticles_.at(0)->velocity_.y == 15.0f) {
-                particleHandler.update();
+                particleHandler.Update();
             }
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y != 15.0f);
             REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.y != -6.89f);
@@ -68,7 +68,7 @@ namespace naivebayes {
             float velSum = particleHandler.sumVel();
 
             while (particleHandler.currentParticles_.at(0)->velocity_.y == 15.0f) {
-                particleHandler.update();
+                particleHandler.Update();
             }
 
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y != 15.0f);
@@ -89,7 +89,7 @@ namespace naivebayes {
             float velSum = particleHandler.sumVel();
 
             while (particleHandler.currentParticles_.at(0)->velocity_.y == 15.0f) {
-                particleHandler.update();
+                particleHandler.Update();
             }
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y != 15.0f);
             REQUIRE(particleHandler.currentParticles_.at(2)->velocity_.y != -15.0f);
@@ -116,7 +116,7 @@ namespace naivebayes {
             float velSum = particleHandler.sumVel();
 
             for (int i = 0; i < 500; i++) {
-                particleHandler.update();
+                particleHandler.Update();
             }
 
             REQUIRE(velSum == Approx(particleHandler.sumVel()));
@@ -133,7 +133,7 @@ namespace naivebayes {
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.x == 15.0f);
 
             while (particleHandler.currentParticles_.at(0)->velocity_.x == 15.0f) {
-                particleHandler.update();
+                particleHandler.Update();
             }
 
 
@@ -158,7 +158,7 @@ namespace naivebayes {
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.y == 15.0f);
 
             while (particleHandler.currentParticles_.at(0)->velocity_.y == 15.0f) {
-                particleHandler.update();
+                particleHandler.Update();
             }
 
 
@@ -186,7 +186,7 @@ namespace naivebayes {
             REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.x == 15.0f);
 
             for (int i =0; i<20; i++){
-                particleHandler.update();
+                particleHandler.Update();
             }
 
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.x == -15.0f);
@@ -210,7 +210,7 @@ namespace naivebayes {
             REQUIRE(particleHandler.currentParticles_.at(1)->velocity_.x == 15.0f);
 
             for (int i =0; i<20; i++){
-                particleHandler.update();
+                particleHandler.Update();
             }
 
             REQUIRE(particleHandler.currentParticles_.at(0)->velocity_.x == 15.0f);
@@ -236,7 +236,7 @@ namespace naivebayes {
 
 
             while (particleHandler.currentParticles_.at(0)->velocity_.y == 15.0f) {
-                particleHandler.update();
+                particleHandler.Update();
             }
 
 
@@ -256,9 +256,9 @@ namespace naivebayes {
             naivebayes::visualizer::particle_handler particleHandler(875);
             particleHandler.addCustomParticle(400, 400, -15.0f, 0);
             REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == 400);
-            particleHandler.update();
+            particleHandler.Update();
             REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == 385);
-            particleHandler.update();
+            particleHandler.Update();
             REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == 370);
 
         }SECTION("Test Velocity/Position Change Simultaneously") {
@@ -271,13 +271,13 @@ namespace naivebayes {
 
             float currentPos = 400;
             REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == currentPos + currentVel * updateCounter);
-            particleHandler.update();
+            particleHandler.Update();
             currentPos += currentVel * updateCounter;
             updateCounter++;
 
 
             REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == currentPos + currentVel * updateCounter);
-            particleHandler.update();
+            particleHandler.Update();
             currentPos += currentVel * updateCounter;
             updateCounter++;
 
@@ -285,7 +285,7 @@ namespace naivebayes {
             REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == currentPos + currentVel);
             currentPos += currentVel;
             particleHandler.currentParticles_.at(0)->velocity_.x = 50.0f;
-            particleHandler.update();
+            particleHandler.Update();
             currentVel = particleHandler.currentParticles_.at(0)->velocity_.x = 50.0f;
             REQUIRE(particleHandler.currentParticles_.at(0)->position_.x == currentPos + currentVel);
 

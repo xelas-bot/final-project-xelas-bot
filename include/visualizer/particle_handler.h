@@ -56,7 +56,7 @@ namespace naivebayes {
             /**
              * Updates pos and vel of all particles in the container
              */
-            void update();
+            void Update();
 
             void speedMultiplyer(double speedMult);
 

@@ -1,38 +1,21 @@
 #include <visualizer/visual_app>
+#include "cinder/ImageIo.h"
+#include "cinder/gl/Texture.h"
 
 namespace naivebayes {
 
     namespace visualizer {
 
         VisualApp::VisualApp() {
-            particle_handler particleHandlerTemp((int) kContainerSize);
-
-            particleHandler_ = particleHandlerTemp;
 
 
-            ci::app::setWindowSize((int) kWindowSize, (int) kWindowSize);
+            player playerTemp(ci::app::getWindowHeight(), ci::app::getWindowWidth());
+            player_ = playerTemp;
 
-            particle particle({kWindowSize, kWindowSize}, {-10, -10});
-            particle_ = particle;
-
-            histogram_ = Histogram(particleHandler_, 100, {150, 700});
         }
 
         void VisualApp::setup() {
-            //particleHandler_.addParticle(1);
 
-
-            particleHandler_.addParticle(10,1,10);
-
-
-            particleHandler_.addParticle(10,4,15);
-            particleHandler_.addParticle(25,3,20);
-
-            std::ofstream myfile;
-            myfile.open(
-                    "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testOverload");
-            myfile << particleHandler_;
-            myfile.close();
 
 
         }
@@ -41,8 +24,7 @@ namespace naivebayes {
             //ci::Color8u background_color(0, 0, 0);  // black
             //ci::gl::clear(background_color);
 
-            histogram_ = Histogram(particleHandler_, 100, {150, 700});
-            particleHandler_.update();
+            player_.Update();
 
 
 
@@ -51,28 +33,17 @@ namespace naivebayes {
         void VisualApp::draw() {
             ci::Color8u background_color(0, 0, 0);  // black
             ci::gl::clear(background_color, true);
-            ci::gl::lineWidth(1);
-            ci::gl::drawLine({0,0},{kContainerSize,0});
-            ci::gl::drawLine({kContainerSize,0},{kContainerSize,kContainerSize});
-            ci::gl::drawLine({kContainerSize,kContainerSize},{0,kContainerSize});
-            ci::gl::drawLine({1,kContainerSize},{1,0});
+            ci::gl::lineWidth(10);
+            ci::gl::drawLine({0,0},{ci::app::getWindowWidth(),0});
+            ci::gl::drawLine({ci::app::getWindowWidth(),0},ci::app::getWindowSize());
+            ci::gl::drawLine(ci::app::getWindowSize(),{0,ci::app::getWindowHeight()});
+            ci::gl::drawLine({0,ci::app::getWindowHeight()},{0,0});
+
+
+            player_.Draw();
 
 
 
-            particleHandler_.draw();
-
-            histogram_.Draw({1,3,4});
-
-
-            ci::gl::drawStringCentered(
-                    "Press Delete to slow the sim. Press Enter to speed the sim. Press f to pay resp- save to file. Press s to load a saved file",
-                    glm::vec2(kWindowSize / 2, kMargin / 2), ci::Color("white"));
-
-
-            ci::gl::drawStringCentered(
-
-                    "Number of particles " + std::to_string(particleHandler_.particleCount_),
-                    glm::vec2(kWindowSize / 2, kWindowSize - kMargin / 2), ci::Color("white"));
 
 
         }
@@ -86,45 +57,17 @@ namespace naivebayes {
         }
 
         void VisualApp::keyDown(ci::app::KeyEvent event) {
-            switch (event.getCode()) {
-                case ci::app::KeyEvent::KEY_s: {
-
-
-                    std::ifstream file;
-                    file.open(
-                            "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testOverload");
-                    file >> particleHandler_;
-                    file.close();
-
-                }
-                case ci::app::KeyEvent::KEY_RETURN: {
-
-
-                    particleHandler_.speedMultiplyer(speedMult_ + 0.25);
-
-
-                    break;
-                }
-                case ci::app::KeyEvent::KEY_DELETE: {
-
-
-                    particleHandler_.speedMultiplyer(speedMult_ - 0.25);
-
-
-                    break;
-                }
-                case ci::app::KeyEvent::KEY_f: {
-
-
-                    std::ofstream myfile;
-                    myfile.open(
-                            "C:/Users/Shrey Patel/Downloads/cinder_0.9.2_vc2015/my-projects/ideal-gas-xelas-bot/data/testOverload");
-                    myfile << particleHandler_;
-                    myfile.close();
-                }
-
-
+            if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
+                player_.MoveRight();
             }
+
+            if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
+                player_.MoveLeft();
+            }
+            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
+                player_.Jump();
+            }
+
         }
 
     }  // namespace visualizer

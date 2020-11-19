@@ -5,6 +5,7 @@ using naivebayes::visualizer::VisualApp;
 void prepareSettings(VisualApp::Settings* settings) {
   settings->setResizable(false);
   settings->setFrameRate(60);
+  settings->setFullScreen(true);
 }
 
 // This line is a macro that expands into an "int main()" function.
