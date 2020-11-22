@@ -63,9 +63,14 @@ namespace naivebayes {
             keyedUpWhileAirborne = false;
 
 
+            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
+                preJumpVelocity =  player_.Jump();
+            }
             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
                 player_.MoveRight();
-
+                if (player_.IsAirBorne()){
+                    player_.MidAirStrafeRight(preJumpVelocity);
+                }
 
                 rightHeldDown = true;
                 leftHeldDown = false;
@@ -74,11 +79,11 @@ namespace naivebayes {
 
             if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
                 player_.MoveLeft();
+                if (player_.IsAirBorne()){
+                    player_.MidAirStrafeLeft(preJumpVelocity);
+                }
                 leftHeldDown = true;
                 rightHeldDown = false;
-            }
-            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
-                player_.Jump();
             }
 
         }

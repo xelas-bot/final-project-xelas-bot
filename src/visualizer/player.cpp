@@ -9,7 +9,13 @@ namespace naivebayes {
 namespace visualizer {
 
     void player::Draw() {
+        ci::gl::color(ci::Color("white"));
         ci::gl::drawSolidCircle(centerPos, radius_);
+
+        ci::gl::color(re, gr, bl);
+        ci::gl::drawSolidCircle({centerPos.x-20,centerPos.y-10}, 10);
+        ci::gl::drawSolidCircle({centerPos.x+20,centerPos.y-10}, 10);
+
     }
 
     void player::Update() {
@@ -45,18 +51,22 @@ namespace visualizer {
         }
     }
 
-    void player::Jump() {
+    glm::vec2 player::Jump() {
         if (!IsAirBorne()){
-            centerPos.y -= 15.f;
-            velocity.y = -25.f;
+            centerPos.y -= 10.f;
+            velocity.y = -20.f;
         }
-
+        return velocity;
 
     }
 
+    void player::MidAirStrafeRight(glm::vec2 currentVel) {
+        velocity.x = currentVel.x + 10;
+    }
 
-
-
+    void player::MidAirStrafeLeft(glm::vec2 currentVel) {
+        velocity.x = currentVel.x - 10;
+    }
 
 
 }

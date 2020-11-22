@@ -32,6 +32,7 @@ namespace naivebayes {
 
             bool leftHeldDown = false;
             bool rightHeldDown = false;
+            glm::vec2 preJumpVelocity = {0,0};
             bool keyedUpWhileAirborne = false;
             const double kWindowSize = 875;
             const double kMargin = 100;

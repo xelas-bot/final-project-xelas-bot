@@ -31,10 +31,12 @@ namespace visualizer {
 
         void MoveRight();
         void MoveLeft();
-        void Jump();
+        glm::vec2 Jump();
         bool IsAirBorne();
         void Update();
         void Draw();
+        void MidAirStrafeRight(glm::vec2 currentVel);
+        void MidAirStrafeLeft(glm::vec2 currentVel);
 
     private:
 
@@ -44,6 +46,13 @@ namespace visualizer {
         float radius_ = (float ) 50.f;
         int32_t window_height_;
         int32_t window_width_;
+
+        int r = rand() % 255;
+        int g = rand() % 255;
+        int b = rand() % 255;
+        float re = (float) r / 255.f;
+        float gr = (float) g / 255.f;
+        float bl = (float) b / 255.f;
 
 
 
