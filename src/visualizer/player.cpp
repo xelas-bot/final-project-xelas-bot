@@ -18,13 +18,15 @@ namespace visualizer {
             velocity+=accel_;
             centerPos+=velocity;
         }else {
-            centerPos.y = (float )window_height_- radius_;
+            velocity.y=0;
+            centerPos.y = (float )window_height_- radius_ + 5;
+            centerPos.x += velocity.x;
         }
 
     }
 
     bool player::IsAirBorne() {
-        if (centerPos.y < window_height_- radius_){
+        if (centerPos.y <= window_height_- radius_){
             return true;
         }
         return false;
@@ -32,7 +34,6 @@ namespace visualizer {
 
     void player::MoveLeft() {
         if (!IsAirBorne()){
-            centerPos.x += -15.f;
             velocity.x = -15.f;
         }
 
@@ -40,7 +41,6 @@ namespace visualizer {
 
     void player::MoveRight() {
         if (!IsAirBorne()){
-            centerPos.x += 15.f;
             velocity.x = 15.f;
         }
     }

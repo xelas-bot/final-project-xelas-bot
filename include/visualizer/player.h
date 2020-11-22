@@ -23,6 +23,7 @@ namespace visualizer {
 
         }
         glm::vec2 centerPos;
+        glm::vec2 velocity;
 
         player(){
 
@@ -37,10 +38,10 @@ namespace visualizer {
 
     private:
 
-        glm::vec2 velocity;
+
         glm::vec2 accel_ = {0,1};
         float height;
-        float radius_ = (float ) 100.f;
+        float radius_ = (float ) 50.f;
         int32_t window_height_;
         int32_t window_width_;
 

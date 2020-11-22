@@ -28,7 +28,11 @@ namespace naivebayes {
 
             void setup() override;
 
+            void keyUp(ci::app::KeyEvent event) override;
 
+            bool leftHeldDown = false;
+            bool rightHeldDown = false;
+            bool keyedUpWhileAirborne = false;
             const double kWindowSize = 875;
             const double kMargin = 100;
             const double kContainerSize = 680;

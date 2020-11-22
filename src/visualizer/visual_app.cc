@@ -24,8 +24,11 @@ namespace naivebayes {
             //ci::Color8u background_color(0, 0, 0);  // black
             //ci::gl::clear(background_color);
 
-            player_.Update();
 
+            player_.Update();
+             if (!player_.IsAirBorne() && keyedUpWhileAirborne){
+                 player_.velocity.x = 0;
+             }
 
 
         }
@@ -57,17 +60,49 @@ namespace naivebayes {
         }
 
         void VisualApp::keyDown(ci::app::KeyEvent event) {
+            keyedUpWhileAirborne = false;
+
+
             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
                 player_.MoveRight();
+
+
+                rightHeldDown = true;
+                leftHeldDown = false;
+
             }
 
             if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
                 player_.MoveLeft();
+                leftHeldDown = true;
+                rightHeldDown = false;
             }
             if (event.getCode() == ci::app::KeyEvent::KEY_UP){
                 player_.Jump();
             }
 
+        }
+
+        void VisualApp::keyUp(ci::app::KeyEvent event) {
+            if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
+                if (!player_.IsAirBorne()){
+                    keyedUpWhileAirborne = false;
+                    player_.velocity.x = 0;
+                }else {
+                    keyedUpWhileAirborne = true;
+                }
+
+            }
+
+            if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
+                if (!player_.IsAirBorne()){
+                    keyedUpWhileAirborne = false;
+                    player_.velocity.x = 0;
+                }else {
+                    keyedUpWhileAirborne = true;
+                }
+
+            }
         }
 
     }  // namespace visualizer
