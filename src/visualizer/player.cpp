@@ -19,15 +19,24 @@ namespace visualizer {
     }
 
     void player::Update() {
-
+        if (centerPos.x <= radius_+2){
+            velocity.x = 0;
+            centerPos.x += 2;
+        }else if (centerPos.x >= window_width_-radius_-2){
+            velocity.x = 0;
+            centerPos.x -= 2;
+        }
         if (IsAirBorne()){
             velocity+=accel_;
             centerPos+=velocity;
         }else {
             velocity.y=0;
-            centerPos.y = (float )window_height_- radius_ + 5;
+            centerPos.y = (float )window_height_- radius_ + 2;
             centerPos.x += velocity.x;
+
         }
+
+
 
     }
 
