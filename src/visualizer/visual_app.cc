@@ -7,6 +7,8 @@ namespace naivebayes {
     namespace visualizer {
 
         VisualApp::VisualApp() {
+            particle_handler particleHandler(ci::app::getWindowHeight(), ci::app::getWindowWidth());
+            particleHandler_ = particleHandler;
 
 
             player playerTemp(ci::app::getWindowHeight(), ci::app::getWindowWidth());
@@ -15,7 +17,10 @@ namespace naivebayes {
         }
 
         void VisualApp::setup() {
-
+        particleHandler_.addCustomParticle(500,(float )ci::app::getWindowHeight() -400,0,0);
+            preJumpVelocity =  player_.Jump();
+            ci::audio::SourceFileRef sourceFile = ci::audio::load( ci::app::loadAsset( "bruh.mp3" ) );
+            mVoice = ci::audio::Voice::create( sourceFile );
 
 
         }
@@ -29,6 +34,7 @@ namespace naivebayes {
              if (!player_.IsAirBorne() && keyedUpWhileAirborne){
                  player_.velocity.x = 0;
              }
+             particleHandler_.Update();
 
 
         }
@@ -42,7 +48,9 @@ namespace naivebayes {
             ci::gl::drawLine(ci::app::getWindowSize(),{0,ci::app::getWindowHeight()});
             ci::gl::drawLine({0,ci::app::getWindowHeight()},{0,0});
 
+            ci::gl::drawString(std::to_string(particleHandler_.currentParticles_.at(0)->velocity_.y), {200,200});
 
+            particleHandler_.draw();
             player_.Draw();
 
 
@@ -64,7 +72,10 @@ namespace naivebayes {
 
 
             if (event.getCode() == ci::app::KeyEvent::KEY_UP){
-                preJumpVelocity =  player_.Jump();
+
+
+                preJumpVelocity = player_.Jump();
+                mVoice->start();
             }
             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
                 player_.MoveRight();
@@ -107,6 +118,9 @@ namespace naivebayes {
                     keyedUpWhileAirborne = true;
                 }
 
+            }
+            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
+                //mVoice->stop();
             }
         }
 

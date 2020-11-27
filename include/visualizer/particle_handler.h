@@ -14,7 +14,8 @@ namespace naivebayes {
         public:
             int particleCount_ = 0;
 
-            int windowSize_;
+            int32_t windowHeight_;
+            int32_t windowWidth_;
 
 
             friend std::ostream &operator<<(std::ostream &out, const particle_handler &c);
@@ -28,7 +29,7 @@ namespace naivebayes {
              *
              * @param windowSize the "size" of the container
              */
-            particle_handler(int windowSize);
+            particle_handler(int32_t windowHeight, int32_t windowWidth);
 
             /**
              * Default constructor

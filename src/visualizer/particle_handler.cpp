@@ -9,20 +9,24 @@
 
 namespace naivebayes {
     namespace visualizer {
-        particle_handler::particle_handler(int windowSize) {
-            windowSize_ = windowSize;
+        particle_handler::particle_handler(int32_t windowHeight, int32_t windowWidth) {
+            windowHeight_=windowHeight;
+            windowWidth_=windowWidth;
+
         }
 
         void particle_handler::Update() {
 
+
             for (size_t i = 0; i < currentParticles_.size(); i++) {
                 int radius = currentParticles_.at(i)->radius_;
+                currentParticles_.at(i)->accel_ = {0,1};
 
                 if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
                     currentParticles_.at(i)->VertCollision();
                     currentParticles_.at(i)->Update();
 
-                } else if (currentParticles_.at(i)->position_.x > windowSize_ - radius &&
+                } else if (currentParticles_.at(i)->position_.x > windowWidth_ - radius &&
                            currentParticles_.at(i)->velocity_.x > 0) {
                     currentParticles_.at(i)->VertCollision();
                     currentParticles_.at(i)->Update();
@@ -31,10 +35,11 @@ namespace naivebayes {
                     currentParticles_.at(i)->HorCollision();
                     currentParticles_.at(i)->Update();
 
-                } else if (currentParticles_.at(i)->position_.y > windowSize_ - radius &&
-                           currentParticles_.at(i)->velocity_.y > 0) {
+                } else if (currentParticles_.at(i)->position_.y >= windowHeight_ - radius &&
+                           currentParticles_.at(i)->velocity_.y >= 0) {
+
                     currentParticles_.at(i)->HorCollision();
-                    currentParticles_.at(i)->Update();
+                    currentParticles_.at(i)->FallCollision();
 
                 } else if (currentParticles_.size() >= 2) {
                     particle *current;
@@ -113,11 +118,11 @@ namespace naivebayes {
 
 
             for (int i = 0; i < number; i++) {
-                float x = (float) rand() * windowSize_;
-                float y = (float) rand() * windowSize_;
+                float x = (float) rand() * windowWidth_;
+                float y = (float) rand() * windowHeight_;
                 double subtractor = rand() / (double) RAND_MAX;
                 particle *temp = new particle(
-                        {rand() % (windowSize_ - 2 * radius) + radius, rand() % (windowSize_ - 2 * radius) + radius},
+                        {rand() % (windowWidth_ - 2 * radius) + radius, rand() % (windowHeight_ - 2 * radius) + radius},
                         {2 * (rand() / (double) RAND_MAX) - subtractor,
                          2 * (rand() / (double) RAND_MAX) - subtractor}, mass, radius);
                 currentParticles_.push_back(temp);

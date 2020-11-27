@@ -6,6 +6,7 @@
 #include "particle_handler.h"
 #include "histogram.h"
 #include "visualizer/player.h"
+#include "cinder/audio/audio.h"
 
 namespace naivebayes {
 
@@ -45,6 +46,7 @@ namespace naivebayes {
             particle_handler particleHandler_;
             particle particle_;
             player player_;
+            ci::audio::VoiceRef mVoice;
 
         };
 
