@@ -1,5 +1,6 @@
 #include <vector>
 #include "particle.h"
+#include "player.h"
 
 //
 // Created by Shrey Patel on 11/1/2020.
@@ -29,7 +30,7 @@ namespace naivebayes {
              *
              * @param windowSize the "size" of the container
              */
-            particle_handler(int32_t windowHeight, int32_t windowWidth);
+            particle_handler(int32_t windowHeight, int32_t windowWidth, player* player);
 
             /**
              * Default constructor
@@ -77,6 +78,7 @@ namespace naivebayes {
 
 
         private:
+            visualizer::player* player_;
 
             float sumXVel_ = 0;
             float sumYVel_ = 0;

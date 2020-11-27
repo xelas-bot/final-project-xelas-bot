@@ -37,13 +37,14 @@ namespace visualizer {
         void Draw();
         void MidAirStrafeRight(glm::vec2 currentVel);
         void MidAirStrafeLeft(glm::vec2 currentVel);
+        float radius_ = (float ) 50.f;
 
     private:
 
 
         glm::vec2 accel_ = {0,1};
         float height;
-        float radius_ = (float ) 50.f;
+
         int32_t window_height_;
         int32_t window_width_;
 

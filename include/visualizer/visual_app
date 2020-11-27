@@ -45,7 +45,7 @@ namespace naivebayes {
             double speedMult_ = 1.0;
             particle_handler particleHandler_;
             particle particle_;
-            player player_;
+            player* player_;
             ci::audio::VoiceRef mVoice;
 
         };

@@ -9,14 +9,19 @@
 
 namespace naivebayes {
     namespace visualizer {
-        particle_handler::particle_handler(int32_t windowHeight, int32_t windowWidth) {
+        particle_handler::particle_handler(int32_t windowHeight, int32_t windowWidth, player* player) {
             windowHeight_=windowHeight;
             windowWidth_=windowWidth;
+            player_ = player;
+            particle *temp = new particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
+            currentParticles_.push_back(temp);
+
 
         }
 
         void particle_handler::Update() {
-
+            particle *temp = new particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
+            currentParticles_.at(0) = temp;
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
                 int radius = currentParticles_.at(i)->radius_;
@@ -222,22 +227,14 @@ namespace naivebayes {
         particle *particle_handler::getClosestParticle(particle *thisParticle) {
             float temp = 0;
             float distance = 0;
-            particle *tempPart;
+            particle *tempPart = currentParticles_.at(0);
 
-            for (size_t i = 0; i < currentParticles_.size(); i++) {
-                if (getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i)) != 0) {
-                    distance = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
-                    tempPart = currentParticles_.at(i);
-
-                }
-            }
 
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
-                temp = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
-                if (temp < distance && temp != 0) {
-                    distance = temp;
-                    tempPart = currentParticles_.at(i);
+                tempPart = currentParticles_.at(i);
+                if (tempPart != thisParticle) {
+                    return tempPart;
                 }
 
             }

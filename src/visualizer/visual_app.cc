@@ -7,18 +7,18 @@ namespace naivebayes {
     namespace visualizer {
 
         VisualApp::VisualApp() {
-            particle_handler particleHandler(ci::app::getWindowHeight(), ci::app::getWindowWidth());
+            player_ = new player(ci::app::getWindowHeight(), ci::app::getWindowWidth());
+
+            particle_handler particleHandler(ci::app::getWindowHeight(), ci::app::getWindowWidth(), player_);
             particleHandler_ = particleHandler;
 
 
-            player playerTemp(ci::app::getWindowHeight(), ci::app::getWindowWidth());
-            player_ = playerTemp;
 
         }
 
         void VisualApp::setup() {
         particleHandler_.addCustomParticle(500,(float )ci::app::getWindowHeight() -400,0,0);
-            preJumpVelocity =  player_.Jump();
+            preJumpVelocity =  player_->Jump();
             ci::audio::SourceFileRef sourceFile = ci::audio::load( ci::app::loadAsset( "bruh.mp3" ) );
             mVoice = ci::audio::Voice::create( sourceFile );
 
@@ -30,9 +30,9 @@ namespace naivebayes {
             //ci::gl::clear(background_color);
 
 
-            player_.Update();
-             if (!player_.IsAirBorne() && keyedUpWhileAirborne){
-                 player_.velocity.x = 0;
+            player_->Update();
+             if (!player_->IsAirBorne() && keyedUpWhileAirborne){
+                 player_->velocity.x = 0;
              }
              particleHandler_.Update();
 
@@ -51,7 +51,7 @@ namespace naivebayes {
             ci::gl::drawString(std::to_string(particleHandler_.currentParticles_.at(0)->velocity_.y), {200,200});
 
             particleHandler_.draw();
-            player_.Draw();
+            player_->Draw();
 
 
 
@@ -74,13 +74,13 @@ namespace naivebayes {
             if (event.getCode() == ci::app::KeyEvent::KEY_UP){
 
 
-                preJumpVelocity = player_.Jump();
+                preJumpVelocity = player_->Jump();
                 mVoice->start();
             }
             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
-                player_.MoveRight();
-                if (player_.IsAirBorne()){
-                    player_.MidAirStrafeRight(preJumpVelocity);
+                player_->MoveRight();
+                if (player_->IsAirBorne()){
+                    player_->MidAirStrafeRight(preJumpVelocity);
                 }
 
                 rightHeldDown = true;
@@ -89,9 +89,9 @@ namespace naivebayes {
             }
 
             if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
-                player_.MoveLeft();
-                if (player_.IsAirBorne()){
-                    player_.MidAirStrafeLeft(preJumpVelocity);
+                player_->MoveLeft();
+                if (player_->IsAirBorne()){
+                    player_->MidAirStrafeLeft(preJumpVelocity);
                 }
                 leftHeldDown = true;
                 rightHeldDown = false;
@@ -101,9 +101,9 @@ namespace naivebayes {
 
         void VisualApp::keyUp(ci::app::KeyEvent event) {
             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
-                if (!player_.IsAirBorne()){
+                if (!player_->IsAirBorne()){
                     keyedUpWhileAirborne = false;
-                    player_.velocity.x = 0;
+                    player_->velocity.x = 0;
                 }else {
                     keyedUpWhileAirborne = true;
                 }
@@ -111,9 +111,9 @@ namespace naivebayes {
             }
 
             if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
-                if (!player_.IsAirBorne()){
+                if (!player_->IsAirBorne()){
                     keyedUpWhileAirborne = false;
-                    player_.velocity.x = 0;
+                    player_->velocity.x = 0;
                 }else {
                     keyedUpWhileAirborne = true;
                 }
