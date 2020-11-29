@@ -17,7 +17,7 @@ namespace naivebayes {
         }
 
         void VisualApp::setup() {
-        particleHandler_.addCustomParticle(500,(float )ci::app::getWindowHeight() -400,0,0);
+        particleHandler_.addCustomParticle((float )ci::app::getWindowWidth()/2.0f,(float )ci::app::getWindowHeight() - 500,0,0);
             preJumpVelocity =  player_->Jump();
             ci::audio::SourceFileRef sourceFile = ci::audio::load( ci::app::loadAsset( "bruh.mp3" ) );
             mVoice = ci::audio::Voice::create( sourceFile );
@@ -35,6 +35,7 @@ namespace naivebayes {
                  player_->velocity.x = 0;
              }
              particleHandler_.Update();
+             frameCount_++;
 
 
         }
@@ -48,8 +49,13 @@ namespace naivebayes {
             ci::gl::drawLine(ci::app::getWindowSize(),{0,ci::app::getWindowHeight()});
             ci::gl::drawLine({0,ci::app::getWindowHeight()},{0,0});
 
-            ci::gl::drawString(std::to_string(particleHandler_.currentParticles_.at(0)->velocity_.y), {200,200});
 
+
+
+
+
+            InitiateStartScreen();
+            DisplayScore();
             particleHandler_.draw();
             player_->Draw();
 
@@ -59,18 +65,43 @@ namespace naivebayes {
 
         }
 
-        void VisualApp::mouseDown(ci::app::MouseEvent event) {
-            //sketchpad_.HandleBrush(event.getPos());
-        }
+        void VisualApp::DisplayScore() {
+            ci::Font font("arial", 50);
+            ci::gl::drawStringCentered(
+                    std::to_string(current_player_score_),
+                    glm::vec2(100,100), ci::Color("white"), font);
 
-        void VisualApp::mouseDrag(ci::app::MouseEvent event) {
-            //sketchpad_.HandleBrush(event.getPos());
+            ci::gl::drawStringCentered(
+                    std::to_string(current_opponent_score),
+                    glm::vec2(ci::app::getWindowWidth()-100,100), ci::Color("white"), font);
+
+        }
+        void VisualApp::InitiateStartScreen() {
+            ci::Font font("arial", 250);
+
+            if (frameCount_ < 350){
+                ci::gl::drawStringCentered(
+                        "START!",
+                        glm::vec2((float )ci::app::getWindowWidth()/2.0f,100), ci::Color("blue"), font);
+            }
+
+
+        }
+        void VisualApp::NewGame() {
+            player_->centerPos = {100, ci::app::getWindowHeight()-100};
+            particleHandler_.currentParticles_.at(1)->position_ = {ci::app::getWindowWidth()/2.0f, ci::app::getWindowHeight()-500};
+            particleHandler_.currentParticles_.at(1)->velocity_ = {0,0};
+            frameCount_ = 0;
+            current_opponent_score = 0;
+            current_player_score_=0;
         }
 
         void VisualApp::keyDown(ci::app::KeyEvent event) {
             keyedUpWhileAirborne = false;
 
-
+            if (event.getCode() == ci::app::KeyEvent::KEY_RETURN){
+                NewGame();
+            }
             if (event.getCode() == ci::app::KeyEvent::KEY_UP){
 
 

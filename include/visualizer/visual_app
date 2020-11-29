@@ -19,11 +19,16 @@ namespace naivebayes {
 
             void draw() override;
 
-            void mouseDown(ci::app::MouseEvent event) override;
-
-            void mouseDrag(ci::app::MouseEvent event) override;
 
             void keyDown(ci::app::KeyEvent event) override;
+
+
+            //Game State Methods
+            void ResetPlayingField();
+            void NewGame();
+            void DisplayScore();
+            void InitiateStartScreen();
+            //
 
             void update() override;
 
@@ -46,7 +51,24 @@ namespace naivebayes {
             particle_handler particleHandler_;
             particle particle_;
             player* player_;
+
+
+            //Frame Timer Variable
+            long frameCount_ = 0;
+            long elapsedFrames_=0;
+
+
+
+            //Game State Variables
+            int current_player_score_ =0;
+            int current_opponent_score=0;
+
+            //Audio Files
             ci::audio::VoiceRef mVoice;
+            ci::audio::VoiceRef goal_;
+            ci::audio::VoiceRef ball_hit_;
+            ci::audio::VoiceRef start_sound_;
+
 
         };
 

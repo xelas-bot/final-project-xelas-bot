@@ -99,7 +99,7 @@ namespace naivebayes {
         }
 
         void particle_handler::draw() {
-            for (size_t i = 0; i < currentParticles_.size(); i++) {
+            for (size_t i = 1; i < currentParticles_.size(); i++) {
                 currentParticles_.at(i)->Draw();
             }
 
