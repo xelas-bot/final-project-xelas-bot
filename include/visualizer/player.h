@@ -42,7 +42,7 @@ namespace visualizer {
     private:
 
 
-        glm::vec2 accel_ = {0,1};
+        glm::vec2 accel_ = {0,0.75};
         float height;
 
         int32_t window_height_;

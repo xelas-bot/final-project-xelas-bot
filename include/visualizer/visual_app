@@ -52,6 +52,8 @@ namespace naivebayes {
             particle particle_;
             player* player_;
 
+            bool GoalChecker();
+
 
             //Frame Timer Variable
             long frameCount_ = 0;
@@ -59,9 +61,16 @@ namespace naivebayes {
 
 
 
+
             //Game State Variables
             int current_player_score_ =0;
             int current_opponent_score=0;
+            bool Menu_State = true;
+            bool Start_Button = false;
+            float k_goal_height_ = 300;
+            float k_goal_width_ = 100;
+            bool goal_scored = false;
+
 
             //Audio Files
             ci::audio::VoiceRef mVoice;

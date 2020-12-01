@@ -25,7 +25,7 @@ namespace naivebayes {
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
                 int radius = currentParticles_.at(i)->radius_;
-                currentParticles_.at(i)->accel_ = {0,1};
+                currentParticles_.at(i)->accel_ = {0,0.75};
 
                 if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
                     currentParticles_.at(i)->VertCollision();
