@@ -6,6 +6,7 @@
 #include "particle_handler.h"
 #include "histogram.h"
 #include "visualizer/player.h"
+#include "cinder/audio/audio.h"
 
 namespace naivebayes {
 
@@ -18,17 +19,27 @@ namespace naivebayes {
 
             void draw() override;
 
-            void mouseDown(ci::app::MouseEvent event) override;
-
-            void mouseDrag(ci::app::MouseEvent event) override;
 
             void keyDown(ci::app::KeyEvent event) override;
+
+
+            //Game State Methods
+            void ResetPlayingField();
+            void NewGame();
+            void DisplayScore();
+            void InitiateStartScreen();
+            //
 
             void update() override;
 
             void setup() override;
 
+            void keyUp(ci::app::KeyEvent event) override;
 
+            bool leftHeldDown = false;
+            bool rightHeldDown = false;
+            glm::vec2 preJumpVelocity = {0,0};
+            bool keyedUpWhileAirborne = false;
             const double kWindowSize = 875;
             const double kMargin = 100;
             const double kContainerSize = 680;
@@ -39,7 +50,34 @@ namespace naivebayes {
             double speedMult_ = 1.0;
             particle_handler particleHandler_;
             particle particle_;
-            player player_;
+            player* player_;
+
+            bool GoalChecker();
+
+
+            //Frame Timer Variable
+            long frameCount_ = 0;
+            long elapsedFrames_=0;
+
+
+
+
+            //Game State Variables
+            int current_player_score_ =0;
+            int current_opponent_score=0;
+            bool Menu_State = true;
+            bool Start_Button = false;
+            float k_goal_height_ = 300;
+            float k_goal_width_ = 100;
+            bool goal_scored = false;
+
+
+            //Audio Files
+            ci::audio::VoiceRef mVoice;
+            ci::audio::VoiceRef goal_;
+            ci::audio::VoiceRef ball_hit_;
+            ci::audio::VoiceRef start_sound_;
+
 
         };
 

@@ -30,12 +30,22 @@ namespace naivebayes {
 
 
         void particle::Update() {
+            velocity_ += accel_;
             position_ += velocity_;
+
+
+
+        }
+        void particle::FallCollision() {
+            position_ += velocity_;
+            velocity_ += accel_;
 
         }
 
 
         void particle::VertCollision() {
+
+
             velocity_.x = (-1) * velocity_.x;
 
         }

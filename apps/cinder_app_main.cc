@@ -4,7 +4,7 @@ using naivebayes::visualizer::VisualApp;
 
 void prepareSettings(VisualApp::Settings* settings) {
   settings->setResizable(false);
-  settings->setFrameRate(60);
+  settings->setFrameRate(100);
   settings->setFullScreen(true);
 }
 

@@ -9,20 +9,29 @@
 
 namespace naivebayes {
     namespace visualizer {
-        particle_handler::particle_handler(int windowSize) {
-            windowSize_ = windowSize;
+        particle_handler::particle_handler(int32_t windowHeight, int32_t windowWidth, player* player) {
+            windowHeight_=windowHeight;
+            windowWidth_=windowWidth;
+            player_ = player;
+            particle *temp = new particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
+            currentParticles_.push_back(temp);
+
+
         }
 
         void particle_handler::Update() {
+            particle *temp = new particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
+            currentParticles_.at(0) = temp;
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
                 int radius = currentParticles_.at(i)->radius_;
+                currentParticles_.at(i)->accel_ = {0,0.75};
 
                 if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
                     currentParticles_.at(i)->VertCollision();
                     currentParticles_.at(i)->Update();
 
-                } else if (currentParticles_.at(i)->position_.x > windowSize_ - radius &&
+                } else if (currentParticles_.at(i)->position_.x > windowWidth_ - radius &&
                            currentParticles_.at(i)->velocity_.x > 0) {
                     currentParticles_.at(i)->VertCollision();
                     currentParticles_.at(i)->Update();
@@ -31,10 +40,11 @@ namespace naivebayes {
                     currentParticles_.at(i)->HorCollision();
                     currentParticles_.at(i)->Update();
 
-                } else if (currentParticles_.at(i)->position_.y > windowSize_ - radius &&
-                           currentParticles_.at(i)->velocity_.y > 0) {
+                } else if (currentParticles_.at(i)->position_.y >= windowHeight_ - radius &&
+                           currentParticles_.at(i)->velocity_.y >= 0) {
+
                     currentParticles_.at(i)->HorCollision();
-                    currentParticles_.at(i)->Update();
+                    currentParticles_.at(i)->FallCollision();
 
                 } else if (currentParticles_.size() >= 2) {
                     particle *current;
@@ -89,7 +99,7 @@ namespace naivebayes {
         }
 
         void particle_handler::draw() {
-            for (size_t i = 0; i < currentParticles_.size(); i++) {
+            for (size_t i = 1; i < currentParticles_.size(); i++) {
                 currentParticles_.at(i)->Draw();
             }
 
@@ -113,11 +123,11 @@ namespace naivebayes {
 
 
             for (int i = 0; i < number; i++) {
-                float x = (float) rand() * windowSize_;
-                float y = (float) rand() * windowSize_;
+                float x = (float) rand() * windowWidth_;
+                float y = (float) rand() * windowHeight_;
                 double subtractor = rand() / (double) RAND_MAX;
                 particle *temp = new particle(
-                        {rand() % (windowSize_ - 2 * radius) + radius, rand() % (windowSize_ - 2 * radius) + radius},
+                        {rand() % (windowWidth_ - 2 * radius) + radius, rand() % (windowHeight_ - 2 * radius) + radius},
                         {2 * (rand() / (double) RAND_MAX) - subtractor,
                          2 * (rand() / (double) RAND_MAX) - subtractor}, mass, radius);
                 currentParticles_.push_back(temp);
@@ -217,22 +227,14 @@ namespace naivebayes {
         particle *particle_handler::getClosestParticle(particle *thisParticle) {
             float temp = 0;
             float distance = 0;
-            particle *tempPart;
+            particle *tempPart = currentParticles_.at(0);
 
-            for (size_t i = 0; i < currentParticles_.size(); i++) {
-                if (getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i)) != 0) {
-                    distance = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
-                    tempPart = currentParticles_.at(i);
-
-                }
-            }
 
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
-                temp = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
-                if (temp < distance && temp != 0) {
-                    distance = temp;
-                    tempPart = currentParticles_.at(i);
+                tempPart = currentParticles_.at(i);
+                if (tempPart != thisParticle) {
+                    return tempPart;
                 }
 
             }

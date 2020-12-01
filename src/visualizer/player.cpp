@@ -9,22 +9,39 @@ namespace naivebayes {
 namespace visualizer {
 
     void player::Draw() {
+        ci::gl::color(ci::Color("white"));
         ci::gl::drawSolidCircle(centerPos, radius_);
+
+        ci::gl::color(re, gr, bl);
+        ci::gl::drawSolidCircle({centerPos.x-20,centerPos.y-10}, 10);
+        ci::gl::drawSolidCircle({centerPos.x+20,centerPos.y-10}, 10);
+
     }
 
     void player::Update() {
-
+        if (centerPos.x <= radius_+2){
+            velocity.x = 0;
+            centerPos.x += 2;
+        }else if (centerPos.x >= window_width_-radius_-2){
+            velocity.x = 0;
+            centerPos.x -= 2;
+        }
         if (IsAirBorne()){
             velocity+=accel_;
             centerPos+=velocity;
         }else {
-            centerPos.y = (float )window_height_- radius_;
+            velocity.y=0;
+            centerPos.y = (float )window_height_- radius_ + 2;
+            centerPos.x += velocity.x;
+
         }
+
+
 
     }
 
     bool player::IsAirBorne() {
-        if (centerPos.y < window_height_- radius_){
+        if (centerPos.y <= window_height_- radius_){
             return true;
         }
         return false;
@@ -32,7 +49,6 @@ namespace visualizer {
 
     void player::MoveLeft() {
         if (!IsAirBorne()){
-            centerPos.x += -15.f;
             velocity.x = -15.f;
         }
 
@@ -40,23 +56,26 @@ namespace visualizer {
 
     void player::MoveRight() {
         if (!IsAirBorne()){
-            centerPos.x += 15.f;
             velocity.x = 15.f;
         }
     }
 
-    void player::Jump() {
+    glm::vec2 player::Jump() {
         if (!IsAirBorne()){
-            centerPos.y -= 15.f;
-            velocity.y = -25.f;
+            centerPos.y -= 10.f;
+            velocity.y = -20.f;
         }
-
+        return velocity;
 
     }
 
+    void player::MidAirStrafeRight(glm::vec2 currentVel) {
+        velocity.x = currentVel.x + 10;
+    }
 
-
-
+    void player::MidAirStrafeLeft(glm::vec2 currentVel) {
+        velocity.x = currentVel.x - 10;
+    }
 
 
 }
