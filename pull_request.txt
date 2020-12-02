@@ -1,0 +1,1322 @@
+From ab9c322c8d461817a5012eb08c426e32ea00661a Mon Sep 17 00:00:00 2001
+From: xelas-bot <55160414+xelas-bot@users.noreply.github.com>
+Date: Sun, 22 Nov 2020 14:45:02 -0600
+Subject: [PATCH 1/7] Finished initial jump mechanics
+
+---
+ .idea/final-project-xelas-bot.iml |  2 ++
+ include/visualizer/player.h       |  5 +++--
+ include/visualizer/visual_app     |  4 ++++
+ src/visualizer/player.cpp         |  8 +++----
+ src/visualizer/visual_app.cc      | 37 ++++++++++++++++++++++++++++++-
+ 5 files changed, 49 insertions(+), 7 deletions(-)
+ create mode 100644 .idea/final-project-xelas-bot.iml
+
+diff --git a/.idea/final-project-xelas-bot.iml b/.idea/final-project-xelas-bot.iml
+new file mode 100644
+index 0000000..f08604b
+--- /dev/null
++++ b/.idea/final-project-xelas-bot.iml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module classpath="CMake" type="CPP_MODULE" version="4" />
+\ No newline at end of file
+diff --git a/include/visualizer/player.h b/include/visualizer/player.h
+index 90a394a..e85588f 100644
+--- a/include/visualizer/player.h
++++ b/include/visualizer/player.h
+@@ -23,6 +23,7 @@ namespace visualizer {
+ 
+         }
+         glm::vec2 centerPos;
++        glm::vec2 velocity;
+ 
+         player(){
+ 
+@@ -37,10 +38,10 @@ namespace visualizer {
+ 
+     private:
+ 
+-        glm::vec2 velocity;
++
+         glm::vec2 accel_ = {0,1};
+         float height;
+-        float radius_ = (float ) 100.f;
++        float radius_ = (float ) 50.f;
+         int32_t window_height_;
+         int32_t window_width_;
+ 
+diff --git a/include/visualizer/visual_app b/include/visualizer/visual_app
+index aa36c60..7e7ca37 100644
+--- a/include/visualizer/visual_app
++++ b/include/visualizer/visual_app
+@@ -28,7 +28,11 @@ namespace naivebayes {
+ 
+             void setup() override;
+ 
++            void keyUp(ci::app::KeyEvent event) override;
+ 
++            bool leftHeldDown = false;
++            bool rightHeldDown = false;
++            bool keyedUpWhileAirborne = false;
+             const double kWindowSize = 875;
+             const double kMargin = 100;
+             const double kContainerSize = 680;
+diff --git a/src/visualizer/player.cpp b/src/visualizer/player.cpp
+index b89667a..4d5d75a 100644
+--- a/src/visualizer/player.cpp
++++ b/src/visualizer/player.cpp
+@@ -18,13 +18,15 @@ namespace visualizer {
+             velocity+=accel_;
+             centerPos+=velocity;
+         }else {
+-            centerPos.y = (float )window_height_- radius_;
++            velocity.y=0;
++            centerPos.y = (float )window_height_- radius_ + 5;
++            centerPos.x += velocity.x;
+         }
+ 
+     }
+ 
+     bool player::IsAirBorne() {
+-        if (centerPos.y < window_height_- radius_){
++        if (centerPos.y <= window_height_- radius_){
+             return true;
+         }
+         return false;
+@@ -32,7 +34,6 @@ namespace visualizer {
+ 
+     void player::MoveLeft() {
+         if (!IsAirBorne()){
+-            centerPos.x += -15.f;
+             velocity.x = -15.f;
+         }
+ 
+@@ -40,7 +41,6 @@ namespace visualizer {
+ 
+     void player::MoveRight() {
+         if (!IsAirBorne()){
+-            centerPos.x += 15.f;
+             velocity.x = 15.f;
+         }
+     }
+diff --git a/src/visualizer/visual_app.cc b/src/visualizer/visual_app.cc
+index 749fcac..eb4dd44 100644
+--- a/src/visualizer/visual_app.cc
++++ b/src/visualizer/visual_app.cc
+@@ -24,8 +24,11 @@ namespace naivebayes {
+             //ci::Color8u background_color(0, 0, 0);  // black
+             //ci::gl::clear(background_color);
+ 
+-            player_.Update();
+ 
++            player_.Update();
++             if (!player_.IsAirBorne() && keyedUpWhileAirborne){
++                 player_.velocity.x = 0;
++             }
+ 
+ 
+         }
+@@ -57,12 +60,22 @@ namespace naivebayes {
+         }
+ 
+         void VisualApp::keyDown(ci::app::KeyEvent event) {
++            keyedUpWhileAirborne = false;
++
++
+             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
+                 player_.MoveRight();
++
++
++                rightHeldDown = true;
++                leftHeldDown = false;
++
+             }
+ 
+             if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
+                 player_.MoveLeft();
++                leftHeldDown = true;
++                rightHeldDown = false;
+             }
+             if (event.getCode() == ci::app::KeyEvent::KEY_UP){
+                 player_.Jump();
+@@ -70,6 +83,28 @@ namespace naivebayes {
+ 
+         }
+ 
++        void VisualApp::keyUp(ci::app::KeyEvent event) {
++            if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
++                if (!player_.IsAirBorne()){
++                    keyedUpWhileAirborne = false;
++                    player_.velocity.x = 0;
++                }else {
++                    keyedUpWhileAirborne = true;
++                }
++
++            }
++
++            if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
++                if (!player_.IsAirBorne()){
++                    keyedUpWhileAirborne = false;
++                    player_.velocity.x = 0;
++                }else {
++                    keyedUpWhileAirborne = true;
++                }
++
++            }
++        }
++
+     }  // namespace visualizer
+ 
+ }  // namespace naivebayes
+
+From 0b9a490d2252ef0e26d819db3aa35733288987c2 Mon Sep 17 00:00:00 2001
+From: xelas-bot <55160414+xelas-bot@users.noreply.github.com>
+Date: Sun, 22 Nov 2020 16:55:05 -0600
+Subject: [PATCH 2/7] Tweaked jump motion
+
+---
+ include/visualizer/player.h   | 11 ++++++++++-
+ include/visualizer/visual_app |  1 +
+ src/visualizer/player.cpp     | 22 ++++++++++++++++------
+ src/visualizer/visual_app.cc  | 13 +++++++++----
+ 4 files changed, 36 insertions(+), 11 deletions(-)
+
+diff --git a/include/visualizer/player.h b/include/visualizer/player.h
+index e85588f..d00fb3c 100644
+--- a/include/visualizer/player.h
++++ b/include/visualizer/player.h
+@@ -31,10 +31,12 @@ namespace visualizer {
+ 
+         void MoveRight();
+         void MoveLeft();
+-        void Jump();
++        glm::vec2 Jump();
+         bool IsAirBorne();
+         void Update();
+         void Draw();
++        void MidAirStrafeRight(glm::vec2 currentVel);
++        void MidAirStrafeLeft(glm::vec2 currentVel);
+ 
+     private:
+ 
+@@ -45,6 +47,13 @@ namespace visualizer {
+         int32_t window_height_;
+         int32_t window_width_;
+ 
++        int r = rand() % 255;
++        int g = rand() % 255;
++        int b = rand() % 255;
++        float re = (float) r / 255.f;
++        float gr = (float) g / 255.f;
++        float bl = (float) b / 255.f;
++
+ 
+ 
+     };
+diff --git a/include/visualizer/visual_app b/include/visualizer/visual_app
+index 7e7ca37..152b25a 100644
+--- a/include/visualizer/visual_app
++++ b/include/visualizer/visual_app
+@@ -32,6 +32,7 @@ namespace naivebayes {
+ 
+             bool leftHeldDown = false;
+             bool rightHeldDown = false;
++            glm::vec2 preJumpVelocity = {0,0};
+             bool keyedUpWhileAirborne = false;
+             const double kWindowSize = 875;
+             const double kMargin = 100;
+diff --git a/src/visualizer/player.cpp b/src/visualizer/player.cpp
+index 4d5d75a..c6567cc 100644
+--- a/src/visualizer/player.cpp
++++ b/src/visualizer/player.cpp
+@@ -9,7 +9,13 @@ namespace naivebayes {
+ namespace visualizer {
+ 
+     void player::Draw() {
++        ci::gl::color(ci::Color("white"));
+         ci::gl::drawSolidCircle(centerPos, radius_);
++
++        ci::gl::color(re, gr, bl);
++        ci::gl::drawSolidCircle({centerPos.x-20,centerPos.y-10}, 10);
++        ci::gl::drawSolidCircle({centerPos.x+20,centerPos.y-10}, 10);
++
+     }
+ 
+     void player::Update() {
+@@ -45,18 +51,22 @@ namespace visualizer {
+         }
+     }
+ 
+-    void player::Jump() {
++    glm::vec2 player::Jump() {
+         if (!IsAirBorne()){
+-            centerPos.y -= 15.f;
+-            velocity.y = -25.f;
++            centerPos.y -= 10.f;
++            velocity.y = -20.f;
+         }
+-
++        return velocity;
+ 
+     }
+ 
++    void player::MidAirStrafeRight(glm::vec2 currentVel) {
++        velocity.x = currentVel.x + 10;
++    }
+ 
+-
+-
++    void player::MidAirStrafeLeft(glm::vec2 currentVel) {
++        velocity.x = currentVel.x - 10;
++    }
+ 
+ 
+ }
+diff --git a/src/visualizer/visual_app.cc b/src/visualizer/visual_app.cc
+index eb4dd44..17023cb 100644
+--- a/src/visualizer/visual_app.cc
++++ b/src/visualizer/visual_app.cc
+@@ -63,9 +63,14 @@ namespace naivebayes {
+             keyedUpWhileAirborne = false;
+ 
+ 
++            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
++                preJumpVelocity =  player_.Jump();
++            }
+             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
+                 player_.MoveRight();
+-
++                if (player_.IsAirBorne()){
++                    player_.MidAirStrafeRight(preJumpVelocity);
++                }
+ 
+                 rightHeldDown = true;
+                 leftHeldDown = false;
+@@ -74,12 +79,12 @@ namespace naivebayes {
+ 
+             if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
+                 player_.MoveLeft();
++                if (player_.IsAirBorne()){
++                    player_.MidAirStrafeLeft(preJumpVelocity);
++                }
+                 leftHeldDown = true;
+                 rightHeldDown = false;
+             }
+-            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
+-                player_.Jump();
+-            }
+ 
+         }
+ 
+
+From 233c5021afc737714a4148160e37cced749ae7b5 Mon Sep 17 00:00:00 2001
+From: xelas-bot <55160414+xelas-bot@users.noreply.github.com>
+Date: Mon, 23 Nov 2020 15:58:47 -0600
+Subject: [PATCH 3/7] Bounded Player box
+
+---
+ src/visualizer/player.cpp | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/src/visualizer/player.cpp b/src/visualizer/player.cpp
+index c6567cc..264c13b 100644
+--- a/src/visualizer/player.cpp
++++ b/src/visualizer/player.cpp
+@@ -19,16 +19,25 @@ namespace visualizer {
+     }
+ 
+     void player::Update() {
+-
++        if (centerPos.x <= radius_+2){
++            velocity.x = 0;
++            centerPos.x += 2;
++        }else if (centerPos.x >= window_width_-radius_-2){
++            velocity.x = 0;
++            centerPos.x -= 2;
++        }
+         if (IsAirBorne()){
+             velocity+=accel_;
+             centerPos+=velocity;
+         }else {
+             velocity.y=0;
+-            centerPos.y = (float )window_height_- radius_ + 5;
++            centerPos.y = (float )window_height_- radius_ + 2;
+             centerPos.x += velocity.x;
++
+         }
+ 
++
++
+     }
+ 
+     bool player::IsAirBorne() {
+
+From 06e2699fefc43cca58b710497c1908bf561138f0 Mon Sep 17 00:00:00 2001
+From: xelas-bot <55160414+xelas-bot@users.noreply.github.com>
+Date: Thu, 26 Nov 2020 19:58:39 -0600
+Subject: [PATCH 4/7] Add gravity to soccer ball and simulate newtonian physics
+
+---
+ apps/cinder_app_main.cc               |  2 +-
+ include/visualizer/particle.h         |  4 +++-
+ include/visualizer/particle_handler.h |  5 +++--
+ include/visualizer/visual_app         |  2 ++
+ src/visualizer/particle.cpp           | 10 ++++++++++
+ src/visualizer/particle_handler.cpp   | 23 ++++++++++++++---------
+ src/visualizer/visual_app.cc          | 18 ++++++++++++++++--
+ 7 files changed, 49 insertions(+), 15 deletions(-)
+
+diff --git a/apps/cinder_app_main.cc b/apps/cinder_app_main.cc
+index c8c6e7c..480eed9 100644
+--- a/apps/cinder_app_main.cc
++++ b/apps/cinder_app_main.cc
+@@ -4,7 +4,7 @@ using naivebayes::visualizer::VisualApp;
+ 
+ void prepareSettings(VisualApp::Settings* settings) {
+   settings->setResizable(false);
+-  settings->setFrameRate(60);
++  settings->setFrameRate(100);
+   settings->setFullScreen(true);
+ }
+ 
+diff --git a/include/visualizer/particle.h b/include/visualizer/particle.h
+index 41fe938..030b488 100644
+--- a/include/visualizer/particle.h
++++ b/include/visualizer/particle.h
+@@ -14,10 +14,12 @@ namespace naivebayes {
+ 
+             glm::vec2 position_ = {0, 0};
+             glm::vec2 velocity_ = {1, 1};
+-            glm::vec2 accel_ = {0, 1};
++            glm::vec2 accel_ = {0, 0.5};
+             int radius_ = 20;
+             int mass_ = 1;
+ 
++            void FallCollision();
++
+             /**
+              * Main Constructor
+              *
+diff --git a/include/visualizer/particle_handler.h b/include/visualizer/particle_handler.h
+index bef4ae0..95f14ab 100644
+--- a/include/visualizer/particle_handler.h
++++ b/include/visualizer/particle_handler.h
+@@ -14,7 +14,8 @@ namespace naivebayes {
+         public:
+             int particleCount_ = 0;
+ 
+-            int windowSize_;
++            int32_t windowHeight_;
++            int32_t windowWidth_;
+ 
+ 
+             friend std::ostream &operator<<(std::ostream &out, const particle_handler &c);
+@@ -28,7 +29,7 @@ namespace naivebayes {
+              *
+              * @param windowSize the "size" of the container
+              */
+-            particle_handler(int windowSize);
++            particle_handler(int32_t windowHeight, int32_t windowWidth);
+ 
+             /**
+              * Default constructor
+diff --git a/include/visualizer/visual_app b/include/visualizer/visual_app
+index 152b25a..2193e80 100644
+--- a/include/visualizer/visual_app
++++ b/include/visualizer/visual_app
+@@ -6,6 +6,7 @@
+ #include "particle_handler.h"
+ #include "histogram.h"
+ #include "visualizer/player.h"
++#include "cinder/audio/audio.h"
+ 
+ namespace naivebayes {
+ 
+@@ -45,6 +46,7 @@ namespace naivebayes {
+             particle_handler particleHandler_;
+             particle particle_;
+             player player_;
++            ci::audio::VoiceRef mVoice;
+ 
+         };
+ 
+diff --git a/src/visualizer/particle.cpp b/src/visualizer/particle.cpp
+index 0591cf1..2ab1f1b 100644
+--- a/src/visualizer/particle.cpp
++++ b/src/visualizer/particle.cpp
+@@ -30,12 +30,22 @@ namespace naivebayes {
+ 
+ 
+         void particle::Update() {
++            velocity_ += accel_;
+             position_ += velocity_;
+ 
++
++
++        }
++        void particle::FallCollision() {
++            position_ += velocity_;
++            velocity_ += accel_;
++
+         }
+ 
+ 
+         void particle::VertCollision() {
++
++
+             velocity_.x = (-1) * velocity_.x;
+ 
+         }
+diff --git a/src/visualizer/particle_handler.cpp b/src/visualizer/particle_handler.cpp
+index 88f5dc5..816238b 100644
+--- a/src/visualizer/particle_handler.cpp
++++ b/src/visualizer/particle_handler.cpp
+@@ -9,20 +9,24 @@
+ 
+ namespace naivebayes {
+     namespace visualizer {
+-        particle_handler::particle_handler(int windowSize) {
+-            windowSize_ = windowSize;
++        particle_handler::particle_handler(int32_t windowHeight, int32_t windowWidth) {
++            windowHeight_=windowHeight;
++            windowWidth_=windowWidth;
++
+         }
+ 
+         void particle_handler::Update() {
+ 
++
+             for (size_t i = 0; i < currentParticles_.size(); i++) {
+                 int radius = currentParticles_.at(i)->radius_;
++                currentParticles_.at(i)->accel_ = {0,1};
+ 
+                 if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
+                     currentParticles_.at(i)->VertCollision();
+                     currentParticles_.at(i)->Update();
+ 
+-                } else if (currentParticles_.at(i)->position_.x > windowSize_ - radius &&
++                } else if (currentParticles_.at(i)->position_.x > windowWidth_ - radius &&
+                            currentParticles_.at(i)->velocity_.x > 0) {
+                     currentParticles_.at(i)->VertCollision();
+                     currentParticles_.at(i)->Update();
+@@ -31,10 +35,11 @@ namespace naivebayes {
+                     currentParticles_.at(i)->HorCollision();
+                     currentParticles_.at(i)->Update();
+ 
+-                } else if (currentParticles_.at(i)->position_.y > windowSize_ - radius &&
+-                           currentParticles_.at(i)->velocity_.y > 0) {
++                } else if (currentParticles_.at(i)->position_.y >= windowHeight_ - radius &&
++                           currentParticles_.at(i)->velocity_.y >= 0) {
++
+                     currentParticles_.at(i)->HorCollision();
+-                    currentParticles_.at(i)->Update();
++                    currentParticles_.at(i)->FallCollision();
+ 
+                 } else if (currentParticles_.size() >= 2) {
+                     particle *current;
+@@ -113,11 +118,11 @@ namespace naivebayes {
+ 
+ 
+             for (int i = 0; i < number; i++) {
+-                float x = (float) rand() * windowSize_;
+-                float y = (float) rand() * windowSize_;
++                float x = (float) rand() * windowWidth_;
++                float y = (float) rand() * windowHeight_;
+                 double subtractor = rand() / (double) RAND_MAX;
+                 particle *temp = new particle(
+-                        {rand() % (windowSize_ - 2 * radius) + radius, rand() % (windowSize_ - 2 * radius) + radius},
++                        {rand() % (windowWidth_ - 2 * radius) + radius, rand() % (windowHeight_ - 2 * radius) + radius},
+                         {2 * (rand() / (double) RAND_MAX) - subtractor,
+                          2 * (rand() / (double) RAND_MAX) - subtractor}, mass, radius);
+                 currentParticles_.push_back(temp);
+diff --git a/src/visualizer/visual_app.cc b/src/visualizer/visual_app.cc
+index 17023cb..68ffa2f 100644
+--- a/src/visualizer/visual_app.cc
++++ b/src/visualizer/visual_app.cc
+@@ -7,6 +7,8 @@ namespace naivebayes {
+     namespace visualizer {
+ 
+         VisualApp::VisualApp() {
++            particle_handler particleHandler(ci::app::getWindowHeight(), ci::app::getWindowWidth());
++            particleHandler_ = particleHandler;
+ 
+ 
+             player playerTemp(ci::app::getWindowHeight(), ci::app::getWindowWidth());
+@@ -15,7 +17,10 @@ namespace naivebayes {
+         }
+ 
+         void VisualApp::setup() {
+-
++        particleHandler_.addCustomParticle(500,(float )ci::app::getWindowHeight() -400,0,0);
++            preJumpVelocity =  player_.Jump();
++            ci::audio::SourceFileRef sourceFile = ci::audio::load( ci::app::loadAsset( "bruh.mp3" ) );
++            mVoice = ci::audio::Voice::create( sourceFile );
+ 
+ 
+         }
+@@ -29,6 +34,7 @@ namespace naivebayes {
+              if (!player_.IsAirBorne() && keyedUpWhileAirborne){
+                  player_.velocity.x = 0;
+              }
++             particleHandler_.Update();
+ 
+ 
+         }
+@@ -42,7 +48,9 @@ namespace naivebayes {
+             ci::gl::drawLine(ci::app::getWindowSize(),{0,ci::app::getWindowHeight()});
+             ci::gl::drawLine({0,ci::app::getWindowHeight()},{0,0});
+ 
++            ci::gl::drawString(std::to_string(particleHandler_.currentParticles_.at(0)->velocity_.y), {200,200});
+ 
++            particleHandler_.draw();
+             player_.Draw();
+ 
+ 
+@@ -64,7 +72,10 @@ namespace naivebayes {
+ 
+ 
+             if (event.getCode() == ci::app::KeyEvent::KEY_UP){
+-                preJumpVelocity =  player_.Jump();
++
++
++                preJumpVelocity = player_.Jump();
++                mVoice->start();
+             }
+             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
+                 player_.MoveRight();
+@@ -108,6 +119,9 @@ namespace naivebayes {
+                 }
+ 
+             }
++            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
++                //mVoice->stop();
++            }
+         }
+ 
+     }  // namespace visualizer
+
+From 86ec4895206a2b58bc4dc2ba24c25dbe1199bb78 Mon Sep 17 00:00:00 2001
+From: xelas-bot <55160414+xelas-bot@users.noreply.github.com>
+Date: Fri, 27 Nov 2020 12:38:06 -0600
+Subject: [PATCH 5/7] Add player-ball collisions
+
+---
+ include/visualizer/particle_handler.h |  4 ++-
+ include/visualizer/player.h           |  3 ++-
+ include/visualizer/visual_app         |  2 +-
+ src/visualizer/particle_handler.cpp   | 25 ++++++++----------
+ src/visualizer/visual_app.cc          | 38 +++++++++++++--------------
+ 5 files changed, 36 insertions(+), 36 deletions(-)
+
+diff --git a/include/visualizer/particle_handler.h b/include/visualizer/particle_handler.h
+index 95f14ab..f3bf15e 100644
+--- a/include/visualizer/particle_handler.h
++++ b/include/visualizer/particle_handler.h
+@@ -1,5 +1,6 @@
+ #include <vector>
+ #include "particle.h"
++#include "player.h"
+ 
+ //
+ // Created by Shrey Patel on 11/1/2020.
+@@ -29,7 +30,7 @@ namespace naivebayes {
+              *
+              * @param windowSize the "size" of the container
+              */
+-            particle_handler(int32_t windowHeight, int32_t windowWidth);
++            particle_handler(int32_t windowHeight, int32_t windowWidth, player* player);
+ 
+             /**
+              * Default constructor
+@@ -77,6 +78,7 @@ namespace naivebayes {
+ 
+ 
+         private:
++            visualizer::player* player_;
+ 
+             float sumXVel_ = 0;
+             float sumYVel_ = 0;
+diff --git a/include/visualizer/player.h b/include/visualizer/player.h
+index d00fb3c..270a7b7 100644
+--- a/include/visualizer/player.h
++++ b/include/visualizer/player.h
+@@ -37,13 +37,14 @@ namespace visualizer {
+         void Draw();
+         void MidAirStrafeRight(glm::vec2 currentVel);
+         void MidAirStrafeLeft(glm::vec2 currentVel);
++        float radius_ = (float ) 50.f;
+ 
+     private:
+ 
+ 
+         glm::vec2 accel_ = {0,1};
+         float height;
+-        float radius_ = (float ) 50.f;
++
+         int32_t window_height_;
+         int32_t window_width_;
+ 
+diff --git a/include/visualizer/visual_app b/include/visualizer/visual_app
+index 2193e80..87912f5 100644
+--- a/include/visualizer/visual_app
++++ b/include/visualizer/visual_app
+@@ -45,7 +45,7 @@ namespace naivebayes {
+             double speedMult_ = 1.0;
+             particle_handler particleHandler_;
+             particle particle_;
+-            player player_;
++            player* player_;
+             ci::audio::VoiceRef mVoice;
+ 
+         };
+diff --git a/src/visualizer/particle_handler.cpp b/src/visualizer/particle_handler.cpp
+index 816238b..6364c63 100644
+--- a/src/visualizer/particle_handler.cpp
++++ b/src/visualizer/particle_handler.cpp
+@@ -9,14 +9,19 @@
+ 
+ namespace naivebayes {
+     namespace visualizer {
+-        particle_handler::particle_handler(int32_t windowHeight, int32_t windowWidth) {
++        particle_handler::particle_handler(int32_t windowHeight, int32_t windowWidth, player* player) {
+             windowHeight_=windowHeight;
+             windowWidth_=windowWidth;
++            player_ = player;
++            particle *temp = new particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
++            currentParticles_.push_back(temp);
++
+ 
+         }
+ 
+         void particle_handler::Update() {
+-
++            particle *temp = new particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
++            currentParticles_.at(0) = temp;
+ 
+             for (size_t i = 0; i < currentParticles_.size(); i++) {
+                 int radius = currentParticles_.at(i)->radius_;
+@@ -222,22 +227,14 @@ namespace naivebayes {
+         particle *particle_handler::getClosestParticle(particle *thisParticle) {
+             float temp = 0;
+             float distance = 0;
+-            particle *tempPart;
++            particle *tempPart = currentParticles_.at(0);
+ 
+-            for (size_t i = 0; i < currentParticles_.size(); i++) {
+-                if (getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i)) != 0) {
+-                    distance = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
+-                    tempPart = currentParticles_.at(i);
+-
+-                }
+-            }
+ 
+ 
+             for (size_t i = 0; i < currentParticles_.size(); i++) {
+-                temp = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
+-                if (temp < distance && temp != 0) {
+-                    distance = temp;
+-                    tempPart = currentParticles_.at(i);
++                tempPart = currentParticles_.at(i);
++                if (tempPart != thisParticle) {
++                    return tempPart;
+                 }
+ 
+             }
+diff --git a/src/visualizer/visual_app.cc b/src/visualizer/visual_app.cc
+index 68ffa2f..b3501a6 100644
+--- a/src/visualizer/visual_app.cc
++++ b/src/visualizer/visual_app.cc
+@@ -7,18 +7,18 @@ namespace naivebayes {
+     namespace visualizer {
+ 
+         VisualApp::VisualApp() {
+-            particle_handler particleHandler(ci::app::getWindowHeight(), ci::app::getWindowWidth());
++            player_ = new player(ci::app::getWindowHeight(), ci::app::getWindowWidth());
++
++            particle_handler particleHandler(ci::app::getWindowHeight(), ci::app::getWindowWidth(), player_);
+             particleHandler_ = particleHandler;
+ 
+ 
+-            player playerTemp(ci::app::getWindowHeight(), ci::app::getWindowWidth());
+-            player_ = playerTemp;
+ 
+         }
+ 
+         void VisualApp::setup() {
+         particleHandler_.addCustomParticle(500,(float )ci::app::getWindowHeight() -400,0,0);
+-            preJumpVelocity =  player_.Jump();
++            preJumpVelocity =  player_->Jump();
+             ci::audio::SourceFileRef sourceFile = ci::audio::load( ci::app::loadAsset( "bruh.mp3" ) );
+             mVoice = ci::audio::Voice::create( sourceFile );
+ 
+@@ -30,9 +30,9 @@ namespace naivebayes {
+             //ci::gl::clear(background_color);
+ 
+ 
+-            player_.Update();
+-             if (!player_.IsAirBorne() && keyedUpWhileAirborne){
+-                 player_.velocity.x = 0;
++            player_->Update();
++             if (!player_->IsAirBorne() && keyedUpWhileAirborne){
++                 player_->velocity.x = 0;
+              }
+              particleHandler_.Update();
+ 
+@@ -51,7 +51,7 @@ namespace naivebayes {
+             ci::gl::drawString(std::to_string(particleHandler_.currentParticles_.at(0)->velocity_.y), {200,200});
+ 
+             particleHandler_.draw();
+-            player_.Draw();
++            player_->Draw();
+ 
+ 
+ 
+@@ -74,13 +74,13 @@ namespace naivebayes {
+             if (event.getCode() == ci::app::KeyEvent::KEY_UP){
+ 
+ 
+-                preJumpVelocity = player_.Jump();
++                preJumpVelocity = player_->Jump();
+                 mVoice->start();
+             }
+             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
+-                player_.MoveRight();
+-                if (player_.IsAirBorne()){
+-                    player_.MidAirStrafeRight(preJumpVelocity);
++                player_->MoveRight();
++                if (player_->IsAirBorne()){
++                    player_->MidAirStrafeRight(preJumpVelocity);
+                 }
+ 
+                 rightHeldDown = true;
+@@ -89,9 +89,9 @@ namespace naivebayes {
+             }
+ 
+             if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
+-                player_.MoveLeft();
+-                if (player_.IsAirBorne()){
+-                    player_.MidAirStrafeLeft(preJumpVelocity);
++                player_->MoveLeft();
++                if (player_->IsAirBorne()){
++                    player_->MidAirStrafeLeft(preJumpVelocity);
+                 }
+                 leftHeldDown = true;
+                 rightHeldDown = false;
+@@ -101,9 +101,9 @@ namespace naivebayes {
+ 
+         void VisualApp::keyUp(ci::app::KeyEvent event) {
+             if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
+-                if (!player_.IsAirBorne()){
++                if (!player_->IsAirBorne()){
+                     keyedUpWhileAirborne = false;
+-                    player_.velocity.x = 0;
++                    player_->velocity.x = 0;
+                 }else {
+                     keyedUpWhileAirborne = true;
+                 }
+@@ -111,9 +111,9 @@ namespace naivebayes {
+             }
+ 
+             if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
+-                if (!player_.IsAirBorne()){
++                if (!player_->IsAirBorne()){
+                     keyedUpWhileAirborne = false;
+-                    player_.velocity.x = 0;
++                    player_->velocity.x = 0;
+                 }else {
+                     keyedUpWhileAirborne = true;
+                 }
+
+From e4b76cbafc2b9a58b0418fbe40620d3ed5d04e85 Mon Sep 17 00:00:00 2001
+From: xelas-bot <55160414+xelas-bot@users.noreply.github.com>
+Date: Sun, 29 Nov 2020 15:19:41 -0600
+Subject: [PATCH 6/7] Add game UI and gamekeeping mechanics
+
+---
+ include/visualizer/visual_app       | 28 ++++++++++++++++--
+ src/visualizer/particle_handler.cpp |  2 +-
+ src/visualizer/visual_app.cc        | 45 ++++++++++++++++++++++++-----
+ 3 files changed, 64 insertions(+), 11 deletions(-)
+
+diff --git a/include/visualizer/visual_app b/include/visualizer/visual_app
+index 87912f5..60f0935 100644
+--- a/include/visualizer/visual_app
++++ b/include/visualizer/visual_app
+@@ -19,12 +19,17 @@ namespace naivebayes {
+ 
+             void draw() override;
+ 
+-            void mouseDown(ci::app::MouseEvent event) override;
+-
+-            void mouseDrag(ci::app::MouseEvent event) override;
+ 
+             void keyDown(ci::app::KeyEvent event) override;
+ 
++
++            //Game State Methods
++            void ResetPlayingField();
++            void NewGame();
++            void DisplayScore();
++            void InitiateStartScreen();
++            //
++
+             void update() override;
+ 
+             void setup() override;
+@@ -46,7 +51,24 @@ namespace naivebayes {
+             particle_handler particleHandler_;
+             particle particle_;
+             player* player_;
++
++
++            //Frame Timer Variable
++            long frameCount_ = 0;
++            long elapsedFrames_=0;
++
++
++
++            //Game State Variables
++            int current_player_score_ =0;
++            int current_opponent_score=0;
++
++            //Audio Files
+             ci::audio::VoiceRef mVoice;
++            ci::audio::VoiceRef goal_;
++            ci::audio::VoiceRef ball_hit_;
++            ci::audio::VoiceRef start_sound_;
++
+ 
+         };
+ 
+diff --git a/src/visualizer/particle_handler.cpp b/src/visualizer/particle_handler.cpp
+index 6364c63..94be42a 100644
+--- a/src/visualizer/particle_handler.cpp
++++ b/src/visualizer/particle_handler.cpp
+@@ -99,7 +99,7 @@ namespace naivebayes {
+         }
+ 
+         void particle_handler::draw() {
+-            for (size_t i = 0; i < currentParticles_.size(); i++) {
++            for (size_t i = 1; i < currentParticles_.size(); i++) {
+                 currentParticles_.at(i)->Draw();
+             }
+ 
+diff --git a/src/visualizer/visual_app.cc b/src/visualizer/visual_app.cc
+index b3501a6..c037aa0 100644
+--- a/src/visualizer/visual_app.cc
++++ b/src/visualizer/visual_app.cc
+@@ -17,7 +17,7 @@ namespace naivebayes {
+         }
+ 
+         void VisualApp::setup() {
+-        particleHandler_.addCustomParticle(500,(float )ci::app::getWindowHeight() -400,0,0);
++        particleHandler_.addCustomParticle((float )ci::app::getWindowWidth()/2.0f,(float )ci::app::getWindowHeight() - 500,0,0);
+             preJumpVelocity =  player_->Jump();
+             ci::audio::SourceFileRef sourceFile = ci::audio::load( ci::app::loadAsset( "bruh.mp3" ) );
+             mVoice = ci::audio::Voice::create( sourceFile );
+@@ -35,6 +35,7 @@ namespace naivebayes {
+                  player_->velocity.x = 0;
+              }
+              particleHandler_.Update();
++             frameCount_++;
+ 
+ 
+         }
+@@ -48,8 +49,13 @@ namespace naivebayes {
+             ci::gl::drawLine(ci::app::getWindowSize(),{0,ci::app::getWindowHeight()});
+             ci::gl::drawLine({0,ci::app::getWindowHeight()},{0,0});
+ 
+-            ci::gl::drawString(std::to_string(particleHandler_.currentParticles_.at(0)->velocity_.y), {200,200});
+ 
++
++
++
++
++            InitiateStartScreen();
++            DisplayScore();
+             particleHandler_.draw();
+             player_->Draw();
+ 
+@@ -59,18 +65,43 @@ namespace naivebayes {
+ 
+         }
+ 
+-        void VisualApp::mouseDown(ci::app::MouseEvent event) {
+-            //sketchpad_.HandleBrush(event.getPos());
++        void VisualApp::DisplayScore() {
++            ci::Font font("arial", 50);
++            ci::gl::drawStringCentered(
++                    std::to_string(current_player_score_),
++                    glm::vec2(100,100), ci::Color("white"), font);
++
++            ci::gl::drawStringCentered(
++                    std::to_string(current_opponent_score),
++                    glm::vec2(ci::app::getWindowWidth()-100,100), ci::Color("white"), font);
++
+         }
++        void VisualApp::InitiateStartScreen() {
++            ci::Font font("arial", 250);
++
++            if (frameCount_ < 350){
++                ci::gl::drawStringCentered(
++                        "START!",
++                        glm::vec2((float )ci::app::getWindowWidth()/2.0f,100), ci::Color("blue"), font);
++            }
++
+ 
+-        void VisualApp::mouseDrag(ci::app::MouseEvent event) {
+-            //sketchpad_.HandleBrush(event.getPos());
++        }
++        void VisualApp::NewGame() {
++            player_->centerPos = {100, ci::app::getWindowHeight()-100};
++            particleHandler_.currentParticles_.at(1)->position_ = {ci::app::getWindowWidth()/2.0f, ci::app::getWindowHeight()-500};
++            particleHandler_.currentParticles_.at(1)->velocity_ = {0,0};
++            frameCount_ = 0;
++            current_opponent_score = 0;
++            current_player_score_=0;
+         }
+ 
+         void VisualApp::keyDown(ci::app::KeyEvent event) {
+             keyedUpWhileAirborne = false;
+ 
+-
++            if (event.getCode() == ci::app::KeyEvent::KEY_RETURN){
++                NewGame();
++            }
+             if (event.getCode() == ci::app::KeyEvent::KEY_UP){
+ 
+ 
+
+From e61acf9ceaf11ae6e6931abf1b7757da78080b06 Mon Sep 17 00:00:00 2001
+From: xelas-bot <55160414+xelas-bot@users.noreply.github.com>
+Date: Tue, 1 Dec 2020 12:08:34 -0600
+Subject: [PATCH 7/7] Add goalkeeping and menu UI
+
+---
+ include/visualizer/particle.h       |   4 +-
+ include/visualizer/player.h         |   2 +-
+ include/visualizer/visual_app       |   9 ++
+ src/visualizer/particle_handler.cpp |   2 +-
+ src/visualizer/visual_app.cc        | 148 +++++++++++++++++++---------
+ 5 files changed, 115 insertions(+), 50 deletions(-)
+
+diff --git a/include/visualizer/particle.h b/include/visualizer/particle.h
+index 030b488..137b0b4 100644
+--- a/include/visualizer/particle.h
++++ b/include/visualizer/particle.h
+@@ -15,8 +15,8 @@ namespace naivebayes {
+             glm::vec2 position_ = {0, 0};
+             glm::vec2 velocity_ = {1, 1};
+             glm::vec2 accel_ = {0, 0.5};
+-            int radius_ = 20;
+-            int mass_ = 1;
++            int radius_ = 40;
++            int mass_ = 2;
+ 
+             void FallCollision();
+ 
+diff --git a/include/visualizer/player.h b/include/visualizer/player.h
+index 270a7b7..5fb7a2b 100644
+--- a/include/visualizer/player.h
++++ b/include/visualizer/player.h
+@@ -42,7 +42,7 @@ namespace visualizer {
+     private:
+ 
+ 
+-        glm::vec2 accel_ = {0,1};
++        glm::vec2 accel_ = {0,0.75};
+         float height;
+ 
+         int32_t window_height_;
+diff --git a/include/visualizer/visual_app b/include/visualizer/visual_app
+index 60f0935..90ddc6a 100644
+--- a/include/visualizer/visual_app
++++ b/include/visualizer/visual_app
+@@ -52,6 +52,8 @@ namespace naivebayes {
+             particle particle_;
+             player* player_;
+ 
++            bool GoalChecker();
++
+ 
+             //Frame Timer Variable
+             long frameCount_ = 0;
+@@ -59,9 +61,16 @@ namespace naivebayes {
+ 
+ 
+ 
++
+             //Game State Variables
+             int current_player_score_ =0;
+             int current_opponent_score=0;
++            bool Menu_State = true;
++            bool Start_Button = false;
++            float k_goal_height_ = 300;
++            float k_goal_width_ = 100;
++            bool goal_scored = false;
++
+ 
+             //Audio Files
+             ci::audio::VoiceRef mVoice;
+diff --git a/src/visualizer/particle_handler.cpp b/src/visualizer/particle_handler.cpp
+index 94be42a..18c8f2a 100644
+--- a/src/visualizer/particle_handler.cpp
++++ b/src/visualizer/particle_handler.cpp
+@@ -25,7 +25,7 @@ namespace naivebayes {
+ 
+             for (size_t i = 0; i < currentParticles_.size(); i++) {
+                 int radius = currentParticles_.at(i)->radius_;
+-                currentParticles_.at(i)->accel_ = {0,1};
++                currentParticles_.at(i)->accel_ = {0,0.75};
+ 
+                 if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
+                     currentParticles_.at(i)->VertCollision();
+diff --git a/src/visualizer/visual_app.cc b/src/visualizer/visual_app.cc
+index c037aa0..3b42e1c 100644
+--- a/src/visualizer/visual_app.cc
++++ b/src/visualizer/visual_app.cc
+@@ -13,14 +13,14 @@ namespace naivebayes {
+             particleHandler_ = particleHandler;
+ 
+ 
+-
+         }
+ 
+         void VisualApp::setup() {
+-        particleHandler_.addCustomParticle((float )ci::app::getWindowWidth()/2.0f,(float )ci::app::getWindowHeight() - 500,0,0);
+-            preJumpVelocity =  player_->Jump();
+-            ci::audio::SourceFileRef sourceFile = ci::audio::load( ci::app::loadAsset( "bruh.mp3" ) );
+-            mVoice = ci::audio::Voice::create( sourceFile );
++            particleHandler_.addCustomParticle((float) ci::app::getWindowWidth() / 2.0f,
++                                               (float) ci::app::getWindowHeight() - 500, 0, 0);
++            preJumpVelocity = player_->Jump();
++            ci::audio::SourceFileRef sourceFile = ci::audio::load(ci::app::loadAsset("bruh.mp3"));
++            mVoice = ci::audio::Voice::create(sourceFile);
+ 
+ 
+         }
+@@ -28,89 +28,145 @@ namespace naivebayes {
+         void VisualApp::update() {
+             //ci::Color8u background_color(0, 0, 0);  // black
+             //ci::gl::clear(background_color);
++            goal_scored = GoalChecker();
++            if (Menu_State) {
++
++            } else {
++                if (!goal_scored){
++                    player_->Update();
++                    if (!player_->IsAirBorne() && keyedUpWhileAirborne) {
++                        player_->velocity.x = 0;
++                    }
++                    particleHandler_.Update();
++                    frameCount_++;
++                }else {
++                    ResetPlayingField();
++                    goal_scored = false;
++                }
+ 
+-
+-            player_->Update();
+-             if (!player_->IsAirBorne() && keyedUpWhileAirborne){
+-                 player_->velocity.x = 0;
+-             }
+-             particleHandler_.Update();
+-             frameCount_++;
++            }
+ 
+ 
+         }
+ 
+         void VisualApp::draw() {
+-            ci::Color8u background_color(0, 0, 0);  // black
+-            ci::gl::clear(background_color, true);
+-            ci::gl::lineWidth(10);
+-            ci::gl::drawLine({0,0},{ci::app::getWindowWidth(),0});
+-            ci::gl::drawLine({ci::app::getWindowWidth(),0},ci::app::getWindowSize());
+-            ci::gl::drawLine(ci::app::getWindowSize(),{0,ci::app::getWindowHeight()});
+-            ci::gl::drawLine({0,ci::app::getWindowHeight()},{0,0});
+-
+ 
+ 
++            float_t center = ci::app::getWindowWidth() / 2.0f;
+ 
++            if (Menu_State) {
++                ci::Font font("arial", 200);
++                ci::gl::drawStringCentered(
++                        "Head Soccer!",
++                        glm::vec2(ci::app::getWindowWidth() / 2.0f, 200), ci::Color("red"), font);
+ 
++                ci::Rectf rectf = {center - 150, 500, center + 150, 600};
++                ci::gl::drawStrokedRect(rectf, 5);
++                ci::Font font_two("arial", 50);
++                ci::gl::drawStringCentered(
++                        "Press V to start",
++                        glm::vec2(ci::app::getWindowWidth() / 2.0f, 535), ci::Color("red"), font_two);
++
++
++            } else {
++                ci::Color8u background_color(0, 0, 0);  // black
++                ci::gl::clear(background_color, true);
++                ci::gl::lineWidth(10);
++                ci::gl::drawLine({0, 0}, {ci::app::getWindowWidth(), 0});
++                ci::gl::drawLine({ci::app::getWindowWidth(), 0}, ci::app::getWindowSize());
++                ci::gl::drawLine(ci::app::getWindowSize(), {0, ci::app::getWindowHeight()});
++                ci::gl::drawLine({0, ci::app::getWindowHeight()}, {0, 0});
++
++                ci::gl::drawLine({0, ci::app::getWindowHeight() - k_goal_height_},
++                                 {k_goal_width_, ci::app::getWindowHeight() - k_goal_height_});
++                ci::gl::drawLine({ci::app::getWindowWidth(), ci::app::getWindowHeight() - k_goal_height_},
++                                 {ci::app::getWindowWidth() - k_goal_width_, ci::app::getWindowHeight() - k_goal_height_});
++
++                InitiateStartScreen();
++                DisplayScore();
++                particleHandler_.draw();
++                player_->Draw();
++            }
+ 
+-            InitiateStartScreen();
+-            DisplayScore();
+-            particleHandler_.draw();
+-            player_->Draw();
+ 
++        }
+ 
++        bool VisualApp::GoalChecker() {
++            size_t size = particleHandler_.currentParticles_.size();
++            visualizer::particle* particle = particleHandler_.currentParticles_.at(size-1);
++            float yOffset = (float )ci::app::getWindowHeight();
+ 
++            if (particle->position_.x < k_goal_width_ && particle->position_.y > yOffset-k_goal_height_ ){
++                current_opponent_score++;
++                return true;
++            }
+ 
++            if (particle->position_.x > ci::app::getWindowWidth() - k_goal_width_ && particle->position_.y > yOffset-k_goal_height_ ){
++                current_player_score_++;
++                return true;
++            }
+ 
++            return false;
+         }
+ 
+         void VisualApp::DisplayScore() {
+             ci::Font font("arial", 50);
+             ci::gl::drawStringCentered(
+                     std::to_string(current_player_score_),
+-                    glm::vec2(100,100), ci::Color("white"), font);
++                    glm::vec2(100, 100), ci::Color("white"), font);
+ 
+             ci::gl::drawStringCentered(
+                     std::to_string(current_opponent_score),
+-                    glm::vec2(ci::app::getWindowWidth()-100,100), ci::Color("white"), font);
++                    glm::vec2(ci::app::getWindowWidth() - 100, 100), ci::Color("white"), font);
+ 
+         }
++
+         void VisualApp::InitiateStartScreen() {
+             ci::Font font("arial", 250);
+ 
+-            if (frameCount_ < 350){
++            if (frameCount_ < 150) {
+                 ci::gl::drawStringCentered(
+                         "START!",
+-                        glm::vec2((float )ci::app::getWindowWidth()/2.0f,100), ci::Color("blue"), font);
++                        glm::vec2((float) ci::app::getWindowWidth() / 2.0f, 100), ci::Color("blue"), font);
+             }
+ 
+ 
+         }
++
+         void VisualApp::NewGame() {
+-            player_->centerPos = {100, ci::app::getWindowHeight()-100};
+-            particleHandler_.currentParticles_.at(1)->position_ = {ci::app::getWindowWidth()/2.0f, ci::app::getWindowHeight()-500};
+-            particleHandler_.currentParticles_.at(1)->velocity_ = {0,0};
++            player_->centerPos = {100, ci::app::getWindowHeight() - 100};
++            particleHandler_.currentParticles_.at(1)->position_ = {ci::app::getWindowWidth() / 2.0f,ci::app::getWindowHeight() - 500};
++            particleHandler_.currentParticles_.at(1)->velocity_ = {0, 0};
+             frameCount_ = 0;
+             current_opponent_score = 0;
+-            current_player_score_=0;
++            current_player_score_ = 0;
++        }
++
++        void VisualApp::ResetPlayingField() {
++            player_->centerPos = {100, ci::app::getWindowHeight() - 100};
++            particleHandler_.currentParticles_.at(1)->position_ = {ci::app::getWindowWidth() / 2.0f,ci::app::getWindowHeight() - 500};
++            particleHandler_.currentParticles_.at(1)->velocity_ = {0, 0};
++            frameCount_ = 0;
+         }
+ 
+         void VisualApp::keyDown(ci::app::KeyEvent event) {
+             keyedUpWhileAirborne = false;
+-
+-            if (event.getCode() == ci::app::KeyEvent::KEY_RETURN){
++            if (event.getCode() == ci::app::KeyEvent::KEY_v) {
++                Start_Button = true;
++                Menu_State = false;
++            }
++            if (event.getCode() == ci::app::KeyEvent::KEY_RETURN) {
+                 NewGame();
+             }
+-            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
++            if (event.getCode() == ci::app::KeyEvent::KEY_UP) {
+ 
+ 
+                 preJumpVelocity = player_->Jump();
+                 mVoice->start();
+             }
+-            if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
++            if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT) {
+                 player_->MoveRight();
+-                if (player_->IsAirBorne()){
++                if (player_->IsAirBorne()) {
+                     player_->MidAirStrafeRight(preJumpVelocity);
+                 }
+ 
+@@ -119,9 +175,9 @@ namespace naivebayes {
+ 
+             }
+ 
+-            if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
++            if (event.getCode() == ci::app::KeyEvent::KEY_LEFT) {
+                 player_->MoveLeft();
+-                if (player_->IsAirBorne()){
++                if (player_->IsAirBorne()) {
+                     player_->MidAirStrafeLeft(preJumpVelocity);
+                 }
+                 leftHeldDown = true;
+@@ -131,26 +187,26 @@ namespace naivebayes {
+         }
+ 
+         void VisualApp::keyUp(ci::app::KeyEvent event) {
+-            if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT ){
+-                if (!player_->IsAirBorne()){
++            if (event.getCode() == ci::app::KeyEvent::KEY_RIGHT) {
++                if (!player_->IsAirBorne()) {
+                     keyedUpWhileAirborne = false;
+                     player_->velocity.x = 0;
+-                }else {
++                } else {
+                     keyedUpWhileAirborne = true;
+                 }
+ 
+             }
+ 
+-            if (event.getCode() == ci::app::KeyEvent::KEY_LEFT ){
+-                if (!player_->IsAirBorne()){
++            if (event.getCode() == ci::app::KeyEvent::KEY_LEFT) {
++                if (!player_->IsAirBorne()) {
+                     keyedUpWhileAirborne = false;
+                     player_->velocity.x = 0;
+-                }else {
++                } else {
+                     keyedUpWhileAirborne = true;
+                 }
+ 
+             }
+-            if (event.getCode() == ci::app::KeyEvent::KEY_UP){
++            if (event.getCode() == ci::app::KeyEvent::KEY_UP) {
+                 //mVoice->stop();
+             }
+         }
