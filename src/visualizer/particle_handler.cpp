@@ -14,39 +14,112 @@ namespace naivebayes {
         }
 
         void particle_handler::Update() {
+            particle *temp = currentParticles_.at(0);
+            temp->position_ = player_->centerPos;
+            temp->velocity_ = player_->velocity;
+
+            particle *tempTwo = currentParticles_.at(1);
+            tempTwo->position_ = player_two_->centerPos;
+            tempTwo->velocity_ = player_two_->velocity;
+
+            particle *leg = currentParticles_.at(2);
+            leg->position_ = player_->center_pos_leg;
+            leg->velocity_ = player_->tangential_vel_;
+            leg->mass_ = 10;
+            leg->radius_ =(int ) player_->leg_radius_;
+            leg->is_player = false;
+            leg->is_leg = true;
+
+            particle *legTwo = currentParticles_.at(3);
+            legTwo->position_ = player_two_->center_pos_leg;
+            legTwo->velocity_ = player_two_->tangential_vel_;
+            legTwo->mass_ = 10;
+            legTwo->radius_ =(int ) player_two_->leg_radius_;
+            legTwo->is_player = false;
+            legTwo->is_leg = true;
 
             for (size_t i = 0; i < currentParticles_.size(); i++) {
-                int radius = currentParticles_.at(i)->radius_;
+                if (true){
+                    int radius = currentParticles_.at(i)->radius_;
+                    currentParticles_.at(i)->accel_ = {0,0.75};
 
-                if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
-                    currentParticles_.at(i)->VertCollision();
-                    currentParticles_.at(i)->Update();
+                    if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
+                        currentParticles_.at(i)->VertCollision();
+                        currentParticles_.at(i)->Update();
 
-                } else if (currentParticles_.at(i)->position_.x > windowSize_ - radius &&
-                           currentParticles_.at(i)->velocity_.x > 0) {
-                    currentParticles_.at(i)->VertCollision();
-                    currentParticles_.at(i)->Update();
+                    } else if (currentParticles_.at(i)->position_.x > windowWidth_ - radius &&
+                               currentParticles_.at(i)->velocity_.x > 0) {
+                        currentParticles_.at(i)->VertCollision();
+                        currentParticles_.at(i)->Update();
 
-                } else if (currentParticles_.at(i)->position_.y < radius && currentParticles_.at(i)->velocity_.y < 0) {
-                    currentParticles_.at(i)->HorCollision();
-                    currentParticles_.at(i)->Update();
+                    } else if (currentParticles_.at(i)->position_.y < radius && currentParticles_.at(i)->velocity_.y < 0) {
+                        currentParticles_.at(i)->HorCollision();
+                        currentParticles_.at(i)->Update();
 
-                } else if (currentParticles_.at(i)->position_.y > windowSize_ - radius &&
-                           currentParticles_.at(i)->velocity_.y > 0) {
-                    currentParticles_.at(i)->HorCollision();
-                    currentParticles_.at(i)->Update();
+                    } else if (currentParticles_.at(i)->position_.y >= windowHeight_ - radius &&
+                               currentParticles_.at(i)->velocity_.y >= 0) {
 
-                } else if (currentParticles_.size() >= 2) {
+                        currentParticles_.at(i)->HorCollision();
+                        currentParticles_.at(i)->FallCollision();
+
+                    } else if (currentParticles_.size() >= 2) {
+                        particle *current;
+                        current = currentParticles_.at(i);
+                        particle *closest = getClosestParticle(current);
+
+
+                        if (getDistanceBetweenParticle(*currentParticles_.at(i), *closest) < radius + closest->radius_
+                            &&
+                            glm::dot((current->velocity_ - closest->velocity_), (current->position_ - closest->position_)) <
+                            0) {
+
+                            glm::vec2 velCur = current->velocity_;
+                            glm::vec2 velClose = closest->velocity_;
+                            glm::vec2 disDiff = current->position_ - closest->position_;
+                            glm::vec2 disDiffTwo = closest->position_ - current->position_;
+
+                            float massMultiplierOne =(2*closest->mass_)/(float )(current->mass_+closest->mass_);
+                            float massMultiplierTwo =(2*current->mass_)/(float )(current->mass_+closest->mass_);
+
+
+                            glm::vec2 currentNewVel =
+                                    velCur -
+                                    (massMultiplierOne*((glm::dot(velCur - velClose, disDiff)) /
+                                                        (glm::length(disDiff) * glm::length(disDiff))) * (disDiff));
+
+
+                            glm::vec2 closestNewVel = velClose -
+                                                      massMultiplierTwo*((glm::dot(velClose - velCur, disDiffTwo)) /
+                                                                         (glm::length(disDiffTwo) * glm::length(disDiffTwo))) *
+                                                      (disDiffTwo);
+
+                            closest->velocity_ = closestNewVel;
+                            current->velocity_ = currentNewVel;
+                            current->Update();
+                            closest->Update();
+
+
+                        } else {
+                            currentParticles_.at(i)->Update();
+                        }
+
+
+                    }
+
+                    if (currentParticles_.size() == 1) {
+                        currentParticles_.at(i)->Update();
+                    }
+
+                }else {
+
                     particle *current;
                     current = currentParticles_.at(i);
-                    particle *closest = getClosestParticle(current);
+                    particle *closest = currentParticles_.at(currentParticles_.size()-1);
+                    int radius = currentParticles_.at(i)->radius_;
 
-
-                    if (getDistanceBetweenParticle(*currentParticles_.at(i), *closest) < radius + closest->radius_
-                        &&
+                    if (getDistanceBetweenParticle(*current,*closest) <= radius + closest->radius_ &&
                         glm::dot((current->velocity_ - closest->velocity_), (current->position_ - closest->position_)) <
-                        0) {
-
+                        0){
                         glm::vec2 velCur = current->velocity_;
                         glm::vec2 velClose = closest->velocity_;
                         glm::vec2 disDiff = current->position_ - closest->position_;
@@ -59,39 +132,29 @@ namespace naivebayes {
                         glm::vec2 currentNewVel =
                                 velCur -
                                 (massMultiplierOne*((glm::dot(velCur - velClose, disDiff)) /
-                                  (glm::length(disDiff) * glm::length(disDiff))) * (disDiff));
+                                                    (glm::length(disDiff) * glm::length(disDiff))) * (disDiff));
 
 
                         glm::vec2 closestNewVel = velClose -
                                                   massMultiplierTwo*((glm::dot(velClose - velCur, disDiffTwo)) /
-                                                   (glm::length(disDiffTwo) * glm::length(disDiffTwo))) *
+                                                                     (glm::length(disDiffTwo) * glm::length(disDiffTwo))) *
                                                   (disDiffTwo);
 
                         closest->velocity_ = closestNewVel;
-                        current->velocity_ = currentNewVel;
-                        current->Update();
                         closest->Update();
-
-
-                    } else {
-                        currentParticles_.at(i)->Update();
                     }
 
 
+
+
+                }
                 }
 
-                if (currentParticles_.size() == 1) {
-                    currentParticles_.at(i)->Update();
-                }
-
-            }
 
         }
 
         void particle_handler::draw() {
-            for (size_t i = 0; i < currentParticles_.size(); i++) {
-                currentParticles_.at(i)->Draw();
-            }
+            currentParticles_.at(currentParticles_.size()-1)->Draw();
 
         }
 
@@ -113,11 +176,11 @@ namespace naivebayes {
 
 
             for (int i = 0; i < number; i++) {
-                float x = (float) rand() * windowSize_;
-                float y = (float) rand() * windowSize_;
+                float x = (float) rand() * windowWidth_;
+                float y = (float) rand() * windowHeight_;
                 double subtractor = rand() / (double) RAND_MAX;
                 particle *temp = new particle(
-                        {rand() % (windowSize_ - 2 * radius) + radius, rand() % (windowSize_ - 2 * radius) + radius},
+                        {rand() % (windowWidth_ - 2 * radius) + radius, rand() % (windowHeight_ - 2 * radius) + radius},
                         {2 * (rand() / (double) RAND_MAX) - subtractor,
                          2 * (rand() / (double) RAND_MAX) - subtractor}, mass, radius);
                 currentParticles_.push_back(temp);
@@ -215,32 +278,33 @@ namespace naivebayes {
 
 
         particle *particle_handler::getClosestParticle(particle *thisParticle) {
-            float temp = 0;
-            float distance = 0;
-            particle *tempPart;
 
-            for (size_t i = 0; i < currentParticles_.size(); i++) {
-                if (getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i)) != 0) {
-                    distance = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
-                    tempPart = currentParticles_.at(i);
+            if (thisParticle->is_leg){
+                return currentParticles_.at(currentParticles_.size()-1);
+            }
+            if (thisParticle->is_player){
+                return currentParticles_.at(currentParticles_.size()-1);
+            }
 
+            float dist = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(0));
+            particle *iter = currentParticles_.at(0);
+            for(size_t i =0; i<currentParticles_.size(); i++){
+                if (currentParticles_.at(i) != thisParticle){
+                    if(getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i)) <= dist){
+                        dist = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
+                        iter = currentParticles_.at(i);
+                    }
                 }
+
+
+
             }
 
 
-            for (size_t i = 0; i < currentParticles_.size(); i++) {
-                temp = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i));
-                if (temp < distance && temp != 0) {
-                    distance = temp;
-                    tempPart = currentParticles_.at(i);
-                }
-
-            }
 
 
-            return tempPart;
 
-
+            return iter;
         }
 
 

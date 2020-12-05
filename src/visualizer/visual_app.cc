@@ -68,6 +68,30 @@ namespace naivebayes {
                 player_.Jump();
             }
 
+            if (two_player_selected_){
+                if (event.getCode() == ci::app::KeyEvent::KEY_d) {
+                    if (!player_two_->IsAirBorne()) {
+                        keyedUpWhileAirborneTwo = false;
+                        player_two_->velocity.x = 0;
+                    } else {
+                        keyedUpWhileAirborneTwo = true;
+                    }
+
+                }
+
+                if (event.getCode() == ci::app::KeyEvent::KEY_a) {
+                    if (!player_two_->IsAirBorne()) {
+                        keyedUpWhileAirborneTwo = false;
+                        player_two_->velocity.x = 0;
+                    } else {
+                        keyedUpWhileAirborneTwo = true;
+                    }
+
+                }
+            }
+
+
+
         }
 
     }  // namespace visualizer

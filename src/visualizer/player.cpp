@@ -14,6 +14,14 @@ namespace visualizer {
 
     void player::Update() {
 
+        tangential_vel_ = {velocity.x - (angular_vel_* radial_arm_ * sin(theta_)),velocity.y - (angular_vel_* radial_arm_ * cos(theta_)) };
+        if (centerPos.x <= radius_+2){
+            velocity.x = 0;
+            centerPos.x += 2;
+        }else if (centerPos.x >= window_width_-radius_-2){
+            velocity.x = 0;
+            centerPos.x -= 2;
+        }
         if (IsAirBorne()){
             velocity+=accel_;
             centerPos+=velocity;

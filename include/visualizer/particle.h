@@ -10,7 +10,7 @@ namespace naivebayes {
 
         class particle {
         public:
-            // Fields made public to simulate a data storage class
+            // Data Fields
 
             glm::vec2 position_ = {0, 0};
             glm::vec2 velocity_ = {1, 1};

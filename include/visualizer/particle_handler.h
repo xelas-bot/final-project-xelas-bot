@@ -1,5 +1,6 @@
 #include <vector>
 #include "particle.h"
+#include "player.h"
 
 //
 // Created by Shrey Patel on 11/1/2020.
@@ -14,7 +15,8 @@ namespace naivebayes {
         public:
             int particleCount_ = 0;
 
-            int windowSize_;
+            int32_t windowHeight_;
+            int32_t windowWidth_;
 
 
             friend std::ostream &operator<<(std::ostream &out, const particle_handler &c);
@@ -28,7 +30,7 @@ namespace naivebayes {
              *
              * @param windowSize the "size" of the container
              */
-            particle_handler(int windowSize);
+            particle_handler(int32_t windowHeight, int32_t windowWidth, player* player, class player* playerTwo);
 
             /**
              * Default constructor
@@ -76,6 +78,8 @@ namespace naivebayes {
 
 
         private:
+            visualizer::player* player_;
+            visualizer::player* player_two_;
 
             float sumXVel_ = 0;
             float sumYVel_ = 0;
