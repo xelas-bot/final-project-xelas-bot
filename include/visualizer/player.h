@@ -5,6 +5,8 @@
 #ifndef NAIVE_BAYES_PLAYER_H
 #define NAIVE_BAYES_PLAYER_H
 #pragma once
+
+#include <cinder/app/AppBase.h>
 #include "cinder/gl/gl.h"
 #include "random"
 #include "math.h"
@@ -20,9 +22,12 @@ namespace visualizer {
             window_height_=windowHeight;
             window_width_ = windowWidth;
             centerPos = {windowWidth/2,windowHeight/2};
+            center_pos_leg = {centerPos.x +  (cos(theta_) * radial_arm_), centerPos.y + (sin(theta_) * radial_arm_)};
 
         }
         glm::vec2 centerPos;
+        glm::vec2 velocity;
+        glm::vec2 center_pos_leg;
 
         player(){
 
@@ -30,19 +35,42 @@ namespace visualizer {
 
         void MoveRight();
         void MoveLeft();
-        void Jump();
+        void KickLeg();
+        glm::vec2 Jump();
         bool IsAirBorne();
         void Update();
         void Draw();
+        void MidAirStrafeRight(glm::vec2 currentVel);
+        void MidAirStrafeLeft(glm::vec2 currentVel);
+        float radius_ = (float ) 50.f;
+        glm::vec2 tangential_vel_ = {angular_vel_* radial_arm_ * sin(theta_),angular_vel_* radial_arm_ * cos(theta_) };
+        float leg_radius_ = 20.0f;
+        bool lefty_ = false;
+        bool righty_ = false;
 
     private:
 
-        glm::vec2 velocity;
-        glm::vec2 accel_ = {0,1};
+
+        glm::vec2 accel_ = {0,0.75};
         float height;
-        float radius_ = (float ) 100.f;
+        float theta_ = (float )(1)*(float )M_PI * (8.0f/4.0f);
+
+        float radial_arm_ = 80.0f;
+
+
+        float angular_vel_ =0;
         int32_t window_height_;
         int32_t window_width_;
+        bool leg_kicked_ = false;
+
+
+
+        int r = rand() % 255;
+        int g = rand() % 255;
+        int b = rand() % 255;
+        float re = (float) r / 255.f;
+        float gr = (float) g / 255.f;
+        float bl = (float) b / 255.f;
 
 
 

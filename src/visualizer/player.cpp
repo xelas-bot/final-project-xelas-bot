@@ -9,7 +9,16 @@ namespace naivebayes {
 namespace visualizer {
 
     void player::Draw() {
+        ci::gl::color(ci::Color("white"));
         ci::gl::drawSolidCircle(centerPos, radius_);
+
+        ci::gl::color(re, gr, bl);
+        ci::gl::drawSolidCircle({centerPos.x-20,centerPos.y-10}, 10);
+        ci::gl::drawSolidCircle({centerPos.x+20,centerPos.y-10}, 10);
+
+        ci::gl::color(ci::Color("red"));
+        ci::gl::drawSolidCircle(center_pos_leg,leg_radius_);
+
     }
 
     void player::Update() {
@@ -26,13 +35,52 @@ namespace visualizer {
             velocity+=accel_;
             centerPos+=velocity;
         }else {
-            centerPos.y = (float )window_height_- radius_;
+            velocity.y=0;
+            centerPos.y = (float )window_height_- radius_ + 2;
+            centerPos.x += velocity.x;
+
         }
+        if (righty_){
+            if (leg_kicked_){
+                angular_vel_ = 0.2f;
+                tangential_vel_ = {velocity.x - (angular_vel_* radial_arm_ * sin(theta_)),velocity.y - (angular_vel_* radial_arm_ * cos(theta_)) };
+                float end = (float )(1)*(float )M_PI * (10.0f/4.0f);
+                if (theta_ < end ){
+                    theta_ = theta_ + angular_vel_;
+                }else {
+                    theta_ = (float )(1)*(float )M_PI * (7.0f/4.0f);
+                    leg_kicked_ = false;
+                    angular_vel_ = 0;
+                }
+            }
+        }
+        if (lefty_){
+            if (leg_kicked_){
+                angular_vel_ = -0.2f;
+                tangential_vel_ = {velocity.x - (angular_vel_* radial_arm_ * sin(theta_)),velocity.y - (angular_vel_* radial_arm_ * cos(theta_)) };
+                float end = (float )(1)*(float )M_PI * (2.0f/3.0f);
+                if (theta_ > end ){
+                    theta_ = theta_ + angular_vel_;
+                }else {
+                    theta_ = (float )(1)*(float )M_PI * (5.0f/4.0f);
+                    leg_kicked_ = false;
+                    angular_vel_ = 0;
+                }
+            }
+        }
+
+
+
+        center_pos_leg = {centerPos.x +  (cos(theta_) * radial_arm_), centerPos.y - ((sin(theta_)) * radial_arm_)};
+
+
+
+
 
     }
 
     bool player::IsAirBorne() {
-        if (centerPos.y < window_height_- radius_){
+        if (centerPos.y <= window_height_- radius_){
             return true;
         }
         return false;
@@ -40,31 +88,38 @@ namespace visualizer {
 
     void player::MoveLeft() {
         if (!IsAirBorne()){
-            centerPos.x += -15.f;
             velocity.x = -15.f;
         }
 
     }
 
+    void player::KickLeg() {
+        leg_kicked_ = true;
+
+    }
+
     void player::MoveRight() {
         if (!IsAirBorne()){
-            centerPos.x += 15.f;
             velocity.x = 15.f;
         }
     }
 
-    void player::Jump() {
+    glm::vec2 player::Jump() {
         if (!IsAirBorne()){
-            centerPos.y -= 15.f;
-            velocity.y = -25.f;
+            centerPos.y -= 10.f;
+            velocity.y = -20.f;
         }
-
+        return velocity;
 
     }
 
+    void player::MidAirStrafeRight(glm::vec2 currentVel) {
+        velocity.x = currentVel.x + 10;
+    }
 
-
-
+    void player::MidAirStrafeLeft(glm::vec2 currentVel) {
+        velocity.x = currentVel.x - 10;
+    }
 
 
 }

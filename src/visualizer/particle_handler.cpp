@@ -9,8 +9,33 @@
 
 namespace naivebayes {
     namespace visualizer {
-        particle_handler::particle_handler(int windowSize) {
-            windowSize_ = windowSize;
+        particle_handler::particle_handler(int32_t windowHeight, int32_t windowWidth, player* player, class player* playerTwo) {
+            windowHeight_=windowHeight;
+            windowWidth_=windowWidth;
+            player_ = player;
+            player_two_ = playerTwo;
+
+            particle *temp = new particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
+            temp->is_player = true;
+            temp->is_leg = false;
+            currentParticles_.push_back(temp);
+
+            particle *tempTwo = new particle({player_two_->centerPos.x, player_two_->centerPos.y}, {player_two_->velocity.x, player_two_->velocity.y}, (int )4, (int )player_two_->radius_);
+            tempTwo->is_player = true;
+            tempTwo->is_leg = false;
+            currentParticles_.push_back(tempTwo);
+
+
+            particle *leg = new particle({player_->center_pos_leg.x, player_->center_pos_leg.y}, {player_->tangential_vel_.x, player_->tangential_vel_.y}, (int )4, (int )player_->leg_radius_);
+            leg->is_player = false;
+            leg->is_leg = true;
+            currentParticles_.push_back(leg);
+
+            particle *legTwo = new particle({player_two_->center_pos_leg.x, player_two_->center_pos_leg.y}, {player_two_->tangential_vel_.x, player_two_->tangential_vel_.y}, (int )4, (int )player_two_->leg_radius_);
+            legTwo->is_player = false;
+            legTwo->is_leg = true;
+            currentParticles_.push_back(legTwo);
+
         }
 
         void particle_handler::Update() {
