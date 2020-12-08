@@ -63,17 +63,17 @@ namespace naivebayes {
             void speedMultiplyer(double speedMult);
 
             /**
-             * Testing method that sums velocities of each particle
+             * Testing method that sums velocities of each Particle
              *
-             * @return: a float representing the sum total of each particle
+             * @return: a float representing the sum total of each Particle
              */
             float sumVel();
 
             /**
-             * Draws all particles in the particle container
+             * Draws all particles in the Particle container
              */
             void draw();
-            std::vector<particle *> currentParticles_;
+            std::vector<Particle *> currentParticles_;
 
 
 
@@ -83,9 +83,9 @@ namespace naivebayes {
 
             float sumXVel_ = 0;
             float sumYVel_ = 0;
-            particle *getClosestParticle(particle *thisParticle);
+            Particle *getClosestParticle(Particle *thisParticle);
 
-            float getDistanceBetweenParticle(particle thisParticle, particle other);
+            float getDistanceBetweenParticle(Particle thisParticle, Particle other);
 
 
         };

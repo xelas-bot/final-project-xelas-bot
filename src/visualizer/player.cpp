@@ -20,6 +20,52 @@ namespace visualizer {
         ci::gl::drawSolidCircle(center_pos_leg,leg_radius_);
 
     }
+    void player::NextMove(Particle particle) {
+        glm::vec2 vel = particle.velocity_;
+        glm::vec2 ball_center_pos = particle.position_;
+
+        float xDiff = centerPos.x - ball_center_pos.x;
+        float yDiff = centerPos.y - ball_center_pos.y;
+
+        if (ball_center_pos.x < (ci::app::getWindowWidth()/2)-200){
+            MoveRight();
+            if (centerPos.x == ci::app::getWindowWidth()-200){
+                velocity.x=0;
+            }
+        }else{
+            if (xDiff >= 0 && xDiff <= 25 && yDiff <=175 ){
+                velocity.x=0;
+                Jump();
+                MoveLeft();
+            }else{
+
+                if (centerPos.x <= ball_center_pos.x){
+                    if (!(xDiff >= 0 && xDiff <= 25)){
+                        MoveRight();
+                    }else{
+                        velocity.x=0;
+                    }
+
+                }else {
+                    if (!(xDiff >= 0 && xDiff <= 25)){
+                        MoveLeft();
+                    }else {
+                        velocity.x=0;
+                    }
+                }
+
+            }
+
+        }
+
+
+
+
+
+
+
+
+    }
 
     void player::Update() {
 

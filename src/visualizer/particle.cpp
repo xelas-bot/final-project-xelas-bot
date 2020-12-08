@@ -8,13 +8,13 @@ namespace naivebayes {
 
     namespace visualizer {
 
-        particle::particle(glm::vec2 position, glm::vec2 velocity) {
+        Particle::Particle(glm::vec2 position, glm::vec2 velocity) {
 
             position_ = position;
             velocity_ = velocity;
         }
 
-        particle::particle(glm::vec2 position, glm::vec2 velocity, int mass, int radius) {
+        Particle::Particle(glm::vec2 position, glm::vec2 velocity, int mass, int radius) {
             position_ = position;
             velocity_ = velocity;
             mass_ = mass;
@@ -22,35 +22,35 @@ namespace naivebayes {
         }
 
 
-        void particle::Draw() {
+        void Particle::Draw() {
             ci::gl::color(re, gr, bl);
             ci::gl::drawSolidCircle(position_, (float )radius_);
 
         }
 
 
-        void particle::Update() {
+        void Particle::Update() {
             velocity_ += accel_;
             position_ += velocity_;
 
 
 
         }
-        void particle::FallCollision() {
+        void Particle::FallCollision() {
             position_ += velocity_;
             velocity_ += accel_;
 
         }
 
 
-        void particle::VertCollision() {
+        void Particle::VertCollision() {
 
 
             velocity_.x = (-1) * velocity_.x;
 
         }
 
-        void particle::HorCollision() {
+        void Particle::HorCollision() {
             velocity_.y = (-1) * velocity_.y;
         }
 

@@ -8,7 +8,7 @@
 namespace naivebayes {
     namespace visualizer {
 
-        class particle {
+        class Particle {
         public:
             // Data Fields
 
@@ -28,25 +28,25 @@ namespace naivebayes {
              * @param position vector of position coords
              * @param velocity vector of velocity
              */
-            particle(glm::vec2 position, glm::vec2 velocity);
+            Particle(glm::vec2 position, glm::vec2 velocity);
 
 
-            particle(glm::vec2 position, glm::vec2 velocity, int mass, int radius);
+            Particle(glm::vec2 position, glm::vec2 velocity, int mass, int radius);
 
             /**
              * Default empty constructor
              */
-            particle() {
+            Particle() {
 
             }
 
             /**
-             * Draws the particle with its current values
+             * Draws the Particle with its current values
              */
             void Draw();
 
             /**
-             * updates the particle using current position and velocity values
+             * updates the Particle using current position and velocity values
              */
             void Update();
 

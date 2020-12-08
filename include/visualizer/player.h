@@ -10,6 +10,7 @@
 #include "cinder/gl/gl.h"
 #include "random"
 #include "math.h"
+#include "particle.h"
 
 namespace naivebayes {
 
@@ -36,6 +37,7 @@ namespace visualizer {
         void MoveRight();
         void MoveLeft();
         void KickLeg();
+        void NextMove(Particle particle);
         glm::vec2 Jump();
         bool IsAirBorne();
         void Update();

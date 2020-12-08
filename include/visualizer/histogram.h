@@ -59,7 +59,7 @@ namespace naivebayes {
              *
              * @param sOne first interval
              * @param sTwo second interval
-             * @param mass of particle to choose from
+             * @param mass of Particle to choose from
              * @return count of particles between interval
              */
             int GetCountBetweenInterval(float sOne, float sTwo, int mass);

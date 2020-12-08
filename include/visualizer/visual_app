@@ -56,7 +56,7 @@ namespace naivebayes {
             Histogram histogram_;
             double speedMult_ = 1.0;
             particle_handler particleHandler_;
-            particle particle_;
+            Particle particle_;
             player* player_;
             player* player_two_;
 

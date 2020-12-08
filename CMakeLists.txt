@@ -53,7 +53,7 @@ list(APPEND CORE_SOURCE_FILES src/core/testing.cc src/visualizer/histogram.cpp)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
         src/visualizer/visual_app.cc
-                            src/visualizer/particle.cpp
+        src/visualizer/particle.cpp
                             src/visualizer/particle_handler.cpp
                             src/visualizer/histogram.cpp
                             src/visualizer/player.cpp

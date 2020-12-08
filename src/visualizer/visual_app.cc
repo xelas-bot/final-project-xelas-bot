@@ -30,7 +30,8 @@ namespace naivebayes {
 
         void VisualApp::update() {
             //ci::Color8u background_color(0, 0, 0);  // black
-            //ci::gl::clear(background_color);
+            //ci::gl::clear(background_color);s
+            size_t size = particleHandler_.currentParticles_.size();
             goal_scored = GoalChecker();
             if (Menu_State) {
 
@@ -38,6 +39,7 @@ namespace naivebayes {
                 if (!goal_scored){
                     particleHandler_.Update();
                     player_->Update();
+                    player_two_->NextMove(*particleHandler_.currentParticles_.at(size-1));
                     player_two_->Update();
                     if (!player_->IsAirBorne() && keyedUpWhileAirborne) {
                         player_->velocity.x = 0;
@@ -102,7 +104,7 @@ namespace naivebayes {
 
         bool VisualApp::GoalChecker() {
             size_t size = particleHandler_.currentParticles_.size();
-            visualizer::particle* particle = particleHandler_.currentParticles_.at(size-1);
+            visualizer::Particle* particle = particleHandler_.currentParticles_.at(size - 1);
             float yOffset = (float )ci::app::getWindowHeight();
 
             if (particle->position_.x < k_goal_width_ && particle->position_.y > yOffset-k_goal_height_ ){
@@ -173,6 +175,7 @@ namespace naivebayes {
             if (event.getCode() == ci::app::KeyEvent::KEY_v) {
                 Start_Button = true;
                 Menu_State = false;
+                ResetPlayingField();
             }
             if (event.getCode() == ci::app::KeyEvent::KEY_RETURN) {
                 NewGame();

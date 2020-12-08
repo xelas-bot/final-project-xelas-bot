@@ -15,23 +15,23 @@ namespace naivebayes {
             player_ = player;
             player_two_ = playerTwo;
 
-            particle *temp = new particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
+            Particle *temp = new Particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
             temp->is_player = true;
             temp->is_leg = false;
             currentParticles_.push_back(temp);
 
-            particle *tempTwo = new particle({player_two_->centerPos.x, player_two_->centerPos.y}, {player_two_->velocity.x, player_two_->velocity.y}, (int )4, (int )player_two_->radius_);
+            Particle *tempTwo = new Particle({player_two_->centerPos.x, player_two_->centerPos.y}, {player_two_->velocity.x, player_two_->velocity.y}, (int )4, (int )player_two_->radius_);
             tempTwo->is_player = true;
             tempTwo->is_leg = false;
             currentParticles_.push_back(tempTwo);
 
 
-            particle *leg = new particle({player_->center_pos_leg.x, player_->center_pos_leg.y}, {player_->tangential_vel_.x, player_->tangential_vel_.y}, (int )4, (int )player_->leg_radius_);
+            Particle *leg = new Particle({player_->center_pos_leg.x, player_->center_pos_leg.y}, {player_->tangential_vel_.x, player_->tangential_vel_.y}, (int )4, (int )player_->leg_radius_);
             leg->is_player = false;
             leg->is_leg = true;
             currentParticles_.push_back(leg);
 
-            particle *legTwo = new particle({player_two_->center_pos_leg.x, player_two_->center_pos_leg.y}, {player_two_->tangential_vel_.x, player_two_->tangential_vel_.y}, (int )4, (int )player_two_->leg_radius_);
+            Particle *legTwo = new Particle({player_two_->center_pos_leg.x, player_two_->center_pos_leg.y}, {player_two_->tangential_vel_.x, player_two_->tangential_vel_.y}, (int )4, (int )player_two_->leg_radius_);
             legTwo->is_player = false;
             legTwo->is_leg = true;
             currentParticles_.push_back(legTwo);
@@ -39,15 +39,15 @@ namespace naivebayes {
         }
 
         void particle_handler::Update() {
-            particle *temp = currentParticles_.at(0);
+            Particle *temp = currentParticles_.at(0);
             temp->position_ = player_->centerPos;
             temp->velocity_ = player_->velocity;
 
-            particle *tempTwo = currentParticles_.at(1);
+            Particle *tempTwo = currentParticles_.at(1);
             tempTwo->position_ = player_two_->centerPos;
             tempTwo->velocity_ = player_two_->velocity;
 
-            particle *leg = currentParticles_.at(2);
+            Particle *leg = currentParticles_.at(2);
             leg->position_ = player_->center_pos_leg;
             leg->velocity_ = player_->tangential_vel_;
             leg->mass_ = 10;
@@ -55,7 +55,7 @@ namespace naivebayes {
             leg->is_player = false;
             leg->is_leg = true;
 
-            particle *legTwo = currentParticles_.at(3);
+            Particle *legTwo = currentParticles_.at(3);
             legTwo->position_ = player_two_->center_pos_leg;
             legTwo->velocity_ = player_two_->tangential_vel_;
             legTwo->mass_ = 10;
@@ -88,9 +88,9 @@ namespace naivebayes {
                         currentParticles_.at(i)->FallCollision();
 
                     } else if (currentParticles_.size() >= 2) {
-                        particle *current;
+                        Particle *current;
                         current = currentParticles_.at(i);
-                        particle *closest = getClosestParticle(current);
+                        Particle *closest = getClosestParticle(current);
 
 
                         if (getDistanceBetweenParticle(*currentParticles_.at(i), *closest) < radius + closest->radius_
@@ -137,9 +137,9 @@ namespace naivebayes {
 
                 }else {
 
-                    particle *current;
+                    Particle *current;
                     current = currentParticles_.at(i);
-                    particle *closest = currentParticles_.at(currentParticles_.size()-1);
+                    Particle *closest = currentParticles_.at(currentParticles_.size() - 1);
                     int radius = currentParticles_.at(i)->radius_;
 
                     if (getDistanceBetweenParticle(*current,*closest) <= radius + closest->radius_ &&
@@ -197,14 +197,14 @@ namespace naivebayes {
 
         void particle_handler::addParticle(int number, int mass, int radius) {
 
-            particle particleRad;
+            Particle particleRad;
 
 
             for (int i = 0; i < number; i++) {
                 float x = (float) rand() * windowWidth_;
                 float y = (float) rand() * windowHeight_;
                 double subtractor = rand() / (double) RAND_MAX;
-                particle *temp = new particle(
+                Particle *temp = new Particle(
                         {rand() % (windowWidth_ - 2 * radius) + radius, rand() % (windowHeight_ - 2 * radius) + radius},
                         {2 * (rand() / (double) RAND_MAX) - subtractor,
                          2 * (rand() / (double) RAND_MAX) - subtractor}, mass, radius);
@@ -214,7 +214,7 @@ namespace naivebayes {
 
         }
 
-        float particle_handler::getDistanceBetweenParticle(particle thisParticle, particle other) {
+        float particle_handler::getDistanceBetweenParticle(Particle thisParticle, Particle other) {
             float xDis = thisParticle.position_.x - other.position_.x;
             float yDis = thisParticle.position_.y - other.position_.y;
 
@@ -236,7 +236,7 @@ namespace naivebayes {
         }
 
         void particle_handler::addCustomParticle(float x, float y, float xVel, float yVel) {
-            particle *temp = new particle({x, y}, {xVel, yVel});
+            Particle *temp = new Particle({x, y}, {xVel, yVel});
 
             currentParticles_.push_back(temp);
             particleCount_++;
@@ -273,7 +273,7 @@ namespace naivebayes {
 
             int lineNumber = 1;
             std::string str;
-            particle *temp;
+            Particle *temp;
             while (std::getline(in, str)) {
 
 
@@ -284,7 +284,7 @@ namespace naivebayes {
                     row.push_back(num);
                 }
                 if (lineNumber % 2 != 0) {
-                    temp = new particle({row.at(0), row.at(1)}, {0, 0});
+                    temp = new Particle({row.at(0), row.at(1)}, {0, 0});
                 }
 
 
@@ -302,7 +302,7 @@ namespace naivebayes {
         }
 
 
-        particle *particle_handler::getClosestParticle(particle *thisParticle) {
+        Particle *particle_handler::getClosestParticle(Particle *thisParticle) {
 
             if (thisParticle->is_leg){
                 return currentParticles_.at(currentParticles_.size()-1);
@@ -312,7 +312,7 @@ namespace naivebayes {
             }
 
             float dist = getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(0));
-            particle *iter = currentParticles_.at(0);
+            Particle *iter = currentParticles_.at(0);
             for(size_t i =0; i<currentParticles_.size(); i++){
                 if (currentParticles_.at(i) != thisParticle){
                     if(getDistanceBetweenParticle(*thisParticle, *currentParticles_.at(i)) <= dist){
