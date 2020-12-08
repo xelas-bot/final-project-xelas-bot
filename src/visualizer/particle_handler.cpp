@@ -15,6 +15,9 @@ namespace naivebayes {
             player_ = player;
             player_two_ = playerTwo;
 
+            ci::audio::SourceFileRef sourceFile = ci::audio::load(ci::app::loadAsset("kick.mp3"));
+            ball_hit_ = ci::audio::Voice::create(sourceFile);
+
             Particle *temp = new Particle({player_->centerPos.x, player_->centerPos.y}, {player_->velocity.x, player_->velocity.y}, (int )4, (int )player_->radius_);
             temp->is_player = true;
             temp->is_leg = false;
@@ -105,6 +108,7 @@ namespace naivebayes {
 
                             float massMultiplierOne =(2*closest->mass_)/(float )(current->mass_+closest->mass_);
                             float massMultiplierTwo =(2*current->mass_)/(float )(current->mass_+closest->mass_);
+                            ball_hit_->start();
 
 
                             glm::vec2 currentNewVel =

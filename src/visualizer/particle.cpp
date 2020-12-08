@@ -12,6 +12,8 @@ namespace naivebayes {
 
             position_ = position;
             velocity_ = velocity;
+            auto img = loadImage(ci::app::loadAsset("ball.png"));
+            ball_img_ = ci::gl::Texture2d::create(img);
         }
 
         Particle::Particle(glm::vec2 position, glm::vec2 velocity, int mass, int radius) {
@@ -19,12 +21,21 @@ namespace naivebayes {
             velocity_ = velocity;
             mass_ = mass;
             radius_ = radius;
+            auto img = loadImage(ci::app::loadAsset("ball.png"));
+            ball_img_ = ci::gl::Texture2d::create(img);
         }
 
 
         void Particle::Draw() {
-            ci::gl::color(re, gr, bl);
-            ci::gl::drawSolidCircle(position_, (float )radius_);
+
+            ci::gl::pushModelMatrix();
+            ci::gl::translate(position_ - glm::vec2(radius_,radius_));
+            ci::gl::scale(2.0f*radius_/ball_img_->getWidth(), 2.0f*radius_/ball_img_->getHeight());
+            ci::gl::color(1,1,1);
+            ci::gl::draw(ball_img_);
+            ci::gl::popModelMatrix();
+
+
 
         }
 

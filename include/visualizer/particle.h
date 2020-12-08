@@ -1,7 +1,10 @@
 //
 // Created by Shrey Patel on 11/1/2020.
 //
+#pragma once
+#include <cinder/app/AppBase.h>
 #include "cinder/gl/gl.h"
+#include "random"
 
 #ifndef NAIVE_BAYES_PARTICLE_H
 #define NAIVE_BAYES_PARTICLE_H
@@ -69,6 +72,7 @@ namespace naivebayes {
             float re = (float) r / 255.f;
             float gr = (float) g / 255.f;
             float bl = (float) b / 255.f;
+            ci::gl::Texture2dRef ball_img_;
 
 
         };

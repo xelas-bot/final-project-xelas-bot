@@ -4,19 +4,37 @@
 
 #include "visualizer/player.h"
 
+
 namespace naivebayes {
 
 namespace visualizer {
 
     void player::Draw() {
-        ci::gl::color(ci::Color("white"));
-        ci::gl::drawSolidCircle(centerPos, radius_);
 
-        ci::gl::color(re, gr, bl);
-        ci::gl::drawSolidCircle({centerPos.x-20,centerPos.y-10}, 10);
-        ci::gl::drawSolidCircle({centerPos.x+20,centerPos.y-10}, 10);
 
-        ci::gl::color(ci::Color("red"));
+
+        //ci::gl::color(ci::Color("white"));
+        //ci::gl::drawSolidCircle(centerPos, radius_);
+
+        ci::gl::pushModelMatrix();
+        ci::gl::translate(centerPos - glm::vec2(radius_,radius_));
+        ci::gl::scale(2.0f*radius_/head_image_->getWidth(), 2.0f*radius_/head_image_->getHeight());
+        ci::gl::color(1,1,1);
+        ci::gl::draw(head_image_);
+        ci::gl::popModelMatrix();
+
+
+
+        //ci::gl::color(re, gr, bl);
+        //ci::gl::drawSolidCircle({centerPos.x-20,centerPos.y-10}, 10);
+        //ci::gl::drawSolidCircle({centerPos.x+20,centerPos.y-10}, 10);
+
+        if (lefty_){
+            ci::gl::color(ci::Color("red"));
+        }else {
+            ci::gl::color(ci::Color("blue"));
+        }
+
         ci::gl::drawSolidCircle(center_pos_leg,leg_radius_);
 
     }
@@ -29,12 +47,14 @@ namespace visualizer {
 
         if (ball_center_pos.x < (ci::app::getWindowWidth()/2)-200){
             MoveRight();
+            KickLeg();
             if (centerPos.x == ci::app::getWindowWidth()-200){
                 velocity.x=0;
             }
         }else{
             if (xDiff >= 0 && xDiff <= 25 && yDiff <=175 ){
                 velocity.x=0;
+                KickLeg();
                 Jump();
                 MoveLeft();
             }else{

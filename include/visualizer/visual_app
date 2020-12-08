@@ -78,14 +78,13 @@ namespace naivebayes {
             float k_goal_height_ = 300;
             float k_goal_width_ = 100;
             bool goal_scored = false;
-            bool two_player_selected_=true;
+            bool two_player_selected_= false;
 
 
             //Audio Files
-            ci::audio::VoiceRef mVoice;
+            ci::audio::VoiceRef jump_sound_;
             ci::audio::VoiceRef goal_;
-            ci::audio::VoiceRef ball_hit_;
-            ci::audio::VoiceRef start_sound_;
+
 
 
         };

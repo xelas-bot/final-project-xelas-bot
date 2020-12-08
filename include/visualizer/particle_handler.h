@@ -1,4 +1,5 @@
 #include <vector>
+#include <cinder/audio/Voice.h>
 #include "particle.h"
 #include "player.h"
 
@@ -80,6 +81,7 @@ namespace naivebayes {
         private:
             visualizer::player* player_;
             visualizer::player* player_two_;
+            ci::audio::VoiceRef ball_hit_;
 
             float sumXVel_ = 0;
             float sumYVel_ = 0;
