@@ -1,13 +1,13 @@
 #include <string>
 
-namespace naivebayes {
+namespace engine {
 
 class Placeholder {
  public:
   std::string GetBestClass() const;
 };
 
-}  // namespace naivebayes
+}  // namespace engine
 
 /*
 TODO: rename this file. You'll also need to modify CMakeLists.txt.

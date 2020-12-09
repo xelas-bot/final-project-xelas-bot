@@ -1,6 +1,6 @@
 #include <visualizer/visual_app>
 
-using naivebayes::visualizer::VisualApp;
+using engine::visualizer::VisualApp;
 
 void prepareSettings(VisualApp::Settings* settings) {
   settings->setResizable(false);

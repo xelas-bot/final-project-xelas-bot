@@ -4,31 +4,21 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "particle_handler.h"
-#include "histogram.h"
+
 #include "visualizer/player.h"
 #include "cinder/audio/audio.h"
 
-namespace naivebayes {
-
+namespace engine {
     namespace visualizer {
 
         class VisualApp : public ci::app::App {
         public:
             VisualApp();
 
-
+            // Cinder visualizer methods
             void draw() override;
 
-
             void keyDown(ci::app::KeyEvent event) override;
-
-
-            //Game State Methods
-            void ResetPlayingField();
-            void NewGame();
-            void DisplayScore();
-            void InitiateStartScreen();
-            //
 
             void update() override;
 
@@ -36,59 +26,86 @@ namespace naivebayes {
 
             void keyUp(ci::app::KeyEvent event) override;
 
+        private:
+
+            // Button State Variables
             bool leftHeldDown = false;
             bool rightHeldDown = false;
-
-            glm::vec2 preJumpVelocity = {0,0};
+            glm::vec2 preJumpVelocity = {0, 0};
             bool keyedUpWhileAirborne = false;
-
-            glm::vec2 preJumpVelocityTwo = {0,0};
+            glm::vec2 preJumpVelocityTwo = {0, 0};
             bool keyedUpWhileAirborneTwo = false;
 
-
-
+            // Container Variables
             const double kWindowSize = 875;
             const double kMargin = 100;
             const double kContainerSize = 680;
             const size_t kImageDimension = 28;
 
-        private:
-            Histogram histogram_;
+            // Player/Particle Variables
             double speedMult_ = 1.0;
-            particle_handler particleHandler_;
+            Particle_handler particleHandler_;
             Particle particle_;
-            player* player_;
-            player* player_two_;
-
-            bool GoalChecker();
+            Player *player_;
+            Player *player_two_;
 
 
-            //Frame Timer Variable
+            // Frame Timer Variable
             long frameCount_ = 0;
-            long elapsedFrames_=0;
+            long elapsedFrames_ = 0;
 
 
-
-
-            //Game State Variables
-            int current_player_score_ =0;
-            int current_opponent_score=0;
+            // Game State Default Variables
+            int current_player_score_ = 0;
+            int current_opponent_score = 0;
             bool Menu_State = true;
             bool Start_Button = false;
             float k_goal_height_ = 300;
             float k_goal_width_ = 100;
             bool goal_scored = false;
-            bool two_player_selected_= false;
+            bool two_player_selected_ = false;
 
 
-            //Audio Files
+            // Audio Files
             ci::audio::VoiceRef jump_sound_;
             ci::audio::VoiceRef goal_;
 
+            // Game State Methods
+
+            /**
+             * Resets Player positions
+             *
+             */
+            void ResetPlayingField();
+
+            /**
+             * Creates new game set
+             *
+             */
+            void NewGame();
+
+            /**
+             * Displays Score Board
+             *
+             */
+            void DisplayScore();
+
+            /**
+             * Initiates Menu Screen
+             *
+             */
+            void InitiateStartScreen();
+
+            /**
+             * Checks if goal is scored
+             *
+             * @return true if goal scored, false otherwise
+             */
+            bool GoalChecker();
 
 
         };
 
     }  // namespace visualizer
 
-}  // namespace naivebayes
+}  // namespace engine

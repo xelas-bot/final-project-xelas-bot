@@ -3,31 +3,29 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/app/App.h"
 
-namespace naivebayes {
+namespace engine {
 
     namespace visualizer {
 
         VisualApp::VisualApp() {
-            player_ = new player(ci::app::getWindowHeight()-15, ci::app::getWindowWidth());
-            player_two_ = new player(ci::app::getWindowHeight()-15, ci::app::getWindowWidth());
+            player_ = new Player(ci::app::getWindowHeight() - 15, ci::app::getWindowWidth());
+            player_two_ = new Player(ci::app::getWindowHeight() - 15, ci::app::getWindowWidth());
             player_two_->lefty_ = true;
             player_->righty_ = true;
-
-            particle_handler particleHandler(ci::app::getWindowHeight()-15, ci::app::getWindowWidth(), player_, player_two_);
+            Particle_handler particleHandler(ci::app::getWindowHeight() - 15, ci::app::getWindowWidth(), player_,
+                                             player_two_);
             particleHandler_ = particleHandler;
 
 
         }
 
         void VisualApp::setup() {
-            particleHandler_.addCustomParticle((float) ci::app::getWindowWidth() / 2.0f,
+            particleHandler_.AddCustomParticle((float) ci::app::getWindowWidth() / 2.0f,
                                                (float) ci::app::getWindowHeight() - 55, 0, 0);
             preJumpVelocity = player_->Jump();
             ci::audio::SourceFileRef sourceFile = ci::audio::load(ci::app::loadAsset("jump.mp3"));
             jump_sound_ = ci::audio::Voice::create(sourceFile);
             ci::gl::enableAlphaBlending();
-
-
 
 
         }
@@ -39,11 +37,11 @@ namespace naivebayes {
             goal_scored = GoalChecker();
 
             if (!Menu_State) {
-                if (!goal_scored){
+                if (!goal_scored) {
                     particleHandler_.Update();
                     player_->Update();
-                    if (!two_player_selected_){
-                        player_two_->NextMove(*particleHandler_.currentParticles_.at(size-1));
+                    if (!two_player_selected_) {
+                        player_two_->NextMove(*particleHandler_.currentParticles_.at(size - 1));
                     }
                     player_two_->Update();
                     if (!player_->IsAirBorne() && keyedUpWhileAirborne) {
@@ -54,7 +52,7 @@ namespace naivebayes {
                     }
 
                     frameCount_++;
-                }else {
+                } else {
                     ResetPlayingField();
                     goal_scored = false;
                 }
@@ -65,8 +63,6 @@ namespace naivebayes {
         }
 
         void VisualApp::draw() {
-
-
             float_t center = ci::app::getWindowWidth() / 2.0f;
 
             if (Menu_State) {
@@ -82,7 +78,7 @@ namespace naivebayes {
                 ci::gl::drawStrokedRect(rectf, 5);
                 ci::Font font_two("arial", 35);
                 ci::gl::drawStringCentered(
-                        "Press V to play 2 player",
+                        "Press V to play 2 Player",
                         glm::vec2(ci::app::getWindowWidth() / 2.0f, 535), ci::Color("red"), font_two);
 
                 ci::Rectf rectf_two = {center - 150, 650, center + 150, 750};
@@ -104,14 +100,14 @@ namespace naivebayes {
                 ci::gl::drawLine({0, ci::app::getWindowHeight() - k_goal_height_},
                                  {k_goal_width_, ci::app::getWindowHeight() - k_goal_height_});
                 ci::gl::drawLine({ci::app::getWindowWidth(), ci::app::getWindowHeight() - k_goal_height_},
-                                 {ci::app::getWindowWidth() - k_goal_width_, ci::app::getWindowHeight() - k_goal_height_});
+                                 {ci::app::getWindowWidth() - k_goal_width_,
+                                  ci::app::getWindowHeight() - k_goal_height_});
 
                 InitiateStartScreen();
                 DisplayScore();
 
 
-                particleHandler_.currentParticles_.at(particleHandler_.currentParticles_.size()-1)->Draw();
-
+                particleHandler_.currentParticles_.at(particleHandler_.currentParticles_.size() - 1)->Draw();
 
 
                 player_->Draw();
@@ -123,15 +119,16 @@ namespace naivebayes {
 
         bool VisualApp::GoalChecker() {
             size_t size = particleHandler_.currentParticles_.size();
-            visualizer::Particle* particle = particleHandler_.currentParticles_.at(size - 1);
-            float yOffset = (float )ci::app::getWindowHeight();
+            visualizer::Particle *particle = particleHandler_.currentParticles_.at(size - 1);
+            float yOffset = (float) ci::app::getWindowHeight();
 
-            if (particle->position_.x < k_goal_width_ && particle->position_.y > yOffset-k_goal_height_ ){
+            if (particle->position_.x < k_goal_width_ && particle->position_.y > yOffset - k_goal_height_) {
                 current_opponent_score++;
                 return true;
             }
 
-            if (particle->position_.x > ci::app::getWindowWidth() - k_goal_width_ && particle->position_.y > yOffset-k_goal_height_ ){
+            if (particle->position_.x > ci::app::getWindowWidth() - k_goal_width_ &&
+                particle->position_.y > yOffset - k_goal_height_) {
                 current_player_score_++;
                 return true;
             }
@@ -165,12 +162,13 @@ namespace naivebayes {
 
         void VisualApp::NewGame() {
             size_t size = particleHandler_.currentParticles_.size();
-            player_two_->velocity ={0,0};
-            player_->velocity ={0,0};
+            player_two_->velocity = {0, 0};
+            player_->velocity = {0, 0};
             player_->centerPos = {100, ci::app::getWindowHeight() - 100};
-            player_two_->centerPos = {ci::app::getWindowWidth()-100,ci::app::getWindowHeight() - 100 };
-            particleHandler_.currentParticles_.at(size-1)->position_ = {ci::app::getWindowWidth() / 2.0f,ci::app::getWindowHeight() - 550};
-            particleHandler_.currentParticles_.at(size-1)->velocity_ = {0, 0};
+            player_two_->centerPos = {ci::app::getWindowWidth() - 100, ci::app::getWindowHeight() - 100};
+            particleHandler_.currentParticles_.at(size - 1)->position_ = {ci::app::getWindowWidth() / 2.0f,
+                                                                          ci::app::getWindowHeight() - 550};
+            particleHandler_.currentParticles_.at(size - 1)->velocity_ = {0, 0};
             frameCount_ = 0;
             current_opponent_score = 0;
             current_player_score_ = 0;
@@ -178,12 +176,13 @@ namespace naivebayes {
 
         void VisualApp::ResetPlayingField() {
             size_t size = particleHandler_.currentParticles_.size();
-            player_two_->velocity ={0,0};
-            player_->velocity ={0,0};
+            player_two_->velocity = {0, 0};
+            player_->velocity = {0, 0};
             player_->centerPos = {100, ci::app::getWindowHeight() - 100};
-            player_two_->centerPos = {ci::app::getWindowWidth()-100,ci::app::getWindowHeight() - 100 };
-            particleHandler_.currentParticles_.at(size-1)->position_ = {ci::app::getWindowWidth() / 2.0f,ci::app::getWindowHeight() - 550};
-            particleHandler_.currentParticles_.at(size-1)->velocity_ = {0, 0};
+            player_two_->centerPos = {ci::app::getWindowWidth() - 100, ci::app::getWindowHeight() - 100};
+            particleHandler_.currentParticles_.at(size - 1)->position_ = {ci::app::getWindowWidth() / 2.0f,
+                                                                          ci::app::getWindowHeight() - 550};
+            particleHandler_.currentParticles_.at(size - 1)->velocity_ = {0, 0};
             frameCount_ = 0;
         }
 
@@ -193,7 +192,7 @@ namespace naivebayes {
             if (event.getCode() == ci::app::KeyEvent::KEY_SPACE) {
                 player_->KickLeg();
             }
-            if (Menu_State){
+            if (Menu_State) {
                 if (event.getCode() == ci::app::KeyEvent::KEY_v) {
                     Start_Button = true;
                     Menu_State = false;
@@ -243,7 +242,7 @@ namespace naivebayes {
                 rightHeldDown = false;
             }
 
-            if (two_player_selected_){
+            if (two_player_selected_) {
                 if (event.getCode() == ci::app::KeyEvent::KEY_q) {
                     player_two_->KickLeg();
                 }
@@ -297,7 +296,7 @@ namespace naivebayes {
 
             }
 
-            if (two_player_selected_){
+            if (two_player_selected_) {
                 if (event.getCode() == ci::app::KeyEvent::KEY_d) {
                     if (!player_two_->IsAirBorne()) {
                         keyedUpWhileAirborneTwo = false;
@@ -320,9 +319,8 @@ namespace naivebayes {
             }
 
 
-
         }
 
     }  // namespace visualizer
 
-}  // namespace naivebayes
+}  // namespace engine

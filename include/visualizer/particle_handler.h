@@ -9,34 +9,31 @@
 
 #ifndef NAIVE_BAYES_PARTICLE_HANDLER_H
 #define NAIVE_BAYES_PARTICLE_HANDLER_H
-namespace naivebayes {
+namespace engine {
 
     namespace visualizer {
-        class particle_handler {
+        class Particle_handler {
         public:
-            int particleCount_ = 0;
-
-            int32_t windowHeight_;
-            int32_t windowWidth_;
 
 
-            friend std::ostream &operator<<(std::ostream &out, const particle_handler &c);
-
-            friend std::istream &operator>>(std::istream &in, particle_handler &c);
-
+            std::vector<Particle *> currentParticles_;
+            bool testing_mode_ = false;
 
 
             /**
-             * Main constructor
+             * Main Constructor
              *
-             * @param windowSize the "size" of the container
+             * @param windowHeight height of container
+             * @param windowWidth width of container
+             * @param player first Player position data
+             * @param playerTwo second Player position data
              */
-            particle_handler(int32_t windowHeight, int32_t windowWidth, player* player, class player* playerTwo);
+            Particle_handler(int32_t windowHeight, int32_t windowWidth, Player* player, class Player* playerTwo);
 
             /**
              * Default constructor
              */
-            particle_handler() {}
+            Particle_handler() {}
 
 
             /**
@@ -44,7 +41,7 @@ namespace naivebayes {
              *
              * @param number of particles to add
              */
-            void addParticle(int number, int mass, int radius);
+            void AddParticle(int number, int mass, int radius);
 
             /**
              * Testing method to add particles in custom locations with custom velocities
@@ -54,34 +51,47 @@ namespace naivebayes {
              * @param xVel x velocty
              * @param yVel y velocity
              */
-            void addCustomParticle(float x, float y, float xVel, float yVel);
+            void AddCustomParticle(float x, float y, float xVel, float yVel);
 
             /**
              * Updates pos and vel of all particles in the container
              */
             void Update();
 
-            void speedMultiplyer(double speedMult);
+            /**
+             * Multiplies the speed of the particles
+             *
+             * @param speedMult multiplier
+             */
+            void SpeedMultiplyer(double speedMult);
 
             /**
              * Testing method that sums velocities of each Particle
              *
              * @return: a float representing the sum total of each Particle
              */
-            float sumVel();
+            float SumVel();
 
             /**
              * Draws all particles in the Particle container
              */
-            void draw();
-            std::vector<Particle *> currentParticles_;
+            void const Draw();
 
+            friend std::ostream &operator<<(std::ostream &out, const Particle_handler &c);
 
+            friend std::istream &operator>>(std::istream &in, Particle_handler &c);
 
         private:
-            visualizer::player* player_;
-            visualizer::player* player_two_;
+
+            // Game State Variables
+            visualizer::Player* player_;
+            visualizer::Player* player_two_;
             ci::audio::VoiceRef ball_hit_;
+
+            // Visualizer Variables
+            int particleCount_ = 0;
+            int32_t windowHeight_=875;
+            int32_t windowWidth_=875;
 
             float sumXVel_ = 0;
             float sumYVel_ = 0;

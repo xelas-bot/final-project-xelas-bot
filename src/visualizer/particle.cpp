@@ -4,7 +4,7 @@
 
 #include "visualizer/particle.h"
 
-namespace naivebayes {
+namespace engine {
 
     namespace visualizer {
 
@@ -12,8 +12,8 @@ namespace naivebayes {
 
             position_ = position;
             velocity_ = velocity;
-            auto img = loadImage(ci::app::loadAsset("ball.png"));
-            ball_img_ = ci::gl::Texture2d::create(img);
+            //auto img = loadImage(ci::app::loadAsset("ball.png"));
+            //ball_img_ = ci::gl::Texture2d::create(img);
         }
 
         Particle::Particle(glm::vec2 position, glm::vec2 velocity, int mass, int radius) {
@@ -21,12 +21,14 @@ namespace naivebayes {
             velocity_ = velocity;
             mass_ = mass;
             radius_ = radius;
+
+            // Image loading
             auto img = loadImage(ci::app::loadAsset("ball.png"));
             ball_img_ = ci::gl::Texture2d::create(img);
         }
 
 
-        void Particle::Draw() {
+        void const Particle::Draw() {
 
             ci::gl::pushModelMatrix();
             ci::gl::translate(position_ - glm::vec2(radius_,radius_));
@@ -35,13 +37,11 @@ namespace naivebayes {
             ci::gl::draw(ball_img_);
             ci::gl::popModelMatrix();
 
-
-
         }
 
 
         void Particle::Update() {
-            velocity_ += accel_;
+            velocity_ += k_accel_;
             position_ += velocity_;
 
 
@@ -49,7 +49,7 @@ namespace naivebayes {
         }
         void Particle::FallCollision() {
             position_ += velocity_;
-            velocity_ += accel_;
+            velocity_ += k_accel_;
 
         }
 
