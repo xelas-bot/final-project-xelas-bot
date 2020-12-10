@@ -27,3 +27,5 @@ Install visual studio
 - [Cinder](https://libcinder.org/download)
 Download and build cinder in your working directory
 
+- [Clion/CMAKE](https://libcinder.org/download)
+
