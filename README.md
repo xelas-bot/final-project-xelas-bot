@@ -16,4 +16,8 @@ Firstly, copy the assets in the repository to the assets folder on your machine.
 For two player mode, the second player will use the second set of key functions.
 
 
-### How to build?
+### How to build and run?
+### Windows
+
+#### Visual Studio
+- [Visual Studio 2015+](https://visualstudio.microsoft.com/)
