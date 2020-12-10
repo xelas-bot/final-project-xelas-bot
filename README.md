@@ -14,3 +14,6 @@ Firstly, copy the assets in the repository to the assets folder on your machine.
 | `enter`   | reset game                                                |
 
 For two player mode, the second player will use the second set of key functions.
+
+
+### How to build?
