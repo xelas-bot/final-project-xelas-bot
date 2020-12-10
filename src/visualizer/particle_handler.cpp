@@ -89,8 +89,8 @@ namespace engine {
                             currentParticles_.at(i)->Update();
                         }
 
-                    }else if (currentParticles_.at(i)->position_.x >= windowWidth_-radius){
-
+                    }
+                    if (currentParticles_.at(i)->position_.x >= windowWidth_-radius-100){
                             if (currentParticles_.at(i)->position_.y >= windowHeight_ - 300-radius){
                                 currentParticles_.at(i)->HorCollision();
                                 currentParticles_.at(i)->Update();
