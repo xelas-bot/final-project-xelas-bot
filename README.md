@@ -20,4 +20,7 @@ For two player mode, the second player will use the second set of key functions.
 ### Windows
 
 #### Visual Studio
+Install visual studio
 - [Visual Studio 2015+](https://visualstudio.microsoft.com/)
+
+#### CLION/Cmake
