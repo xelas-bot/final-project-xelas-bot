@@ -83,6 +83,20 @@ namespace engine {
                     int radius = currentParticles_.at(i)->radius_;
                     currentParticles_.at(i)->k_accel_ = {0, 0.75};
 
+                    if (currentParticles_.at(i)->position_.x <= 100+radius){
+                        if (currentParticles_.at(i)->position_.y >= windowHeight_ - 300-radius){
+                            currentParticles_.at(i)->HorCollision();
+                            currentParticles_.at(i)->Update();
+                        }
+
+                    }else if (currentParticles_.at(i)->position_.x >= windowWidth_-radius){
+
+                            if (currentParticles_.at(i)->position_.y >= windowHeight_ - 300-radius){
+                                currentParticles_.at(i)->HorCollision();
+                                currentParticles_.at(i)->Update();
+                            }
+                    }
+
                     if (currentParticles_.at(i)->position_.x < radius && currentParticles_.at(i)->velocity_.x < 0) {
                         currentParticles_.at(i)->VertCollision();
                         currentParticles_.at(i)->Update();
