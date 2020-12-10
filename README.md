@@ -23,4 +23,7 @@ For two player mode, the second player will use the second set of key functions.
 Install visual studio
 - [Visual Studio 2015+](https://visualstudio.microsoft.com/)
 
-#### CLION/Cmake
+#### CLION/Cmake/Cinder
+- [Cinder](https://libcinder.org/download)
+Download and build cinder in your working directory
+
