@@ -23,9 +23,18 @@ For two player mode, the second player will use the second set of key functions.
 Install visual studio
 - [Visual Studio 2015+](https://visualstudio.microsoft.com/)
 
+#### Assets
+Copy the contents of the assets folder in the repo into the assets folder in the cinder directory.
+
 #### CLION/Cmake/Cinder
 - [Cinder](https://libcinder.org/download)
 Download and build cinder in your working directory
 
-- [Clion/CMAKE](https://libcinder.org/download)
+- [Clion/CMAKE](https://www.jetbrains.com/clion/)
+Download CLION (IDE) and use the cmakelists to link/build the project within the cinder directory 
+
+#### Running
+In order to run the project, run the .exe file in the executable folder in the repo that contains the assets folder
+
+
 
